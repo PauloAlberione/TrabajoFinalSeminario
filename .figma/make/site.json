@@ -1,0 +1,10 @@
+{
+  "description": "This web application offers cognitive stimulation and tracking for older adults, featuring an accessible design that promotes ease of use and engagement.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
