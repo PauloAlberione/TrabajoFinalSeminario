@@ -18,6 +18,7 @@ logs/
 .firebase/
 *-firebase-adminsdk-*.json
 service-account*.json
+firebase-admin.json
 *.pem
 AGENTS.md
 CLAUDE.md

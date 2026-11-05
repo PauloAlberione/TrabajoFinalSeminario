@@ -41,8 +41,8 @@ export function PaginaPoliticaPrivacidad({
             Política de privacidad
           </h1>
           <p>
-            Versión 2 · Revisión del contenido:{" "}
-            <time dateTime="2026-11-02">2 de noviembre de 2026</time>.
+            Versión 3 · Revisión del contenido:{" "}
+            <time dateTime="2026-11-05">5 de noviembre de 2026</time>.
           </p>
           <p>
             MenteClear es un prototipo académico de estimulación cognitiva y
@@ -142,7 +142,8 @@ export function PaginaPoliticaPrivacidad({
             2. Dónde se procesan los datos y qué servicios intervienen
           </h2>
           <p>
-            El backend procesa las operaciones de cuenta, sesiones, resultados y
+            La web se publica en Firebase Hosting. El backend se ejecuta en
+            Render y procesa las operaciones de cuenta, sesiones, resultados y
             progreso. Cloud Firestore, de Google, almacena la información de la
             aplicación. Firebase Authentication gestiona la identidad de acceso.
           </p>
@@ -162,13 +163,14 @@ export function PaginaPoliticaPrivacidad({
             los servicios externos.
           </p>
           <p>
-            La consulta técnica del 2 de noviembre de 2026 confirmó que
-            Firestore está en São Paulo, Brasil (región southamerica-east1),
-            fuera de Argentina. Falta confirmar con el titular las ubicaciones
-            de los demás servicios, las condiciones de los proveedores y el
-            tratamiento de las transferencias internacionales. No hay cuentas
-            separadas para familiares ni profesionales, ni una función para
-            compartirles automáticamente tu historial.
+            La configuración verificada el 5 de noviembre de 2026 ubica
+            Firestore en São Paulo, Brasil (región southamerica-east1), y el
+            backend de Render en la región Virginia, Estados Unidos, fuera de
+            Argentina. Falta confirmar con el titular las condiciones de los
+            proveedores, la ubicación de los demás servicios y el tratamiento
+            de las transferencias internacionales. No hay cuentas separadas
+            para familiares ni profesionales, ni una función para compartirles
+            automáticamente tu historial.
           </p>
         </section>
         <section aria-labelledby="privacy-device" className="space-y-3">

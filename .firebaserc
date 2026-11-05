@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "proyectofinal-84c8d"
+  },
+  "targets": {
+    "proyectofinal-84c8d": {
+      "hosting": {
+        "web": [
+          "menteclear"
+        ]
+      }
+    }
+  }
+}
