@@ -21,7 +21,6 @@ jobs:
     env:
       FIREBASE_PROJECT_ID: ${{ vars.BACKUP_PROJECT_ID }}
       BACKUP_PUBLIC_KEY: ${{ vars.BACKUP_PUBLIC_KEY }}
-      BACKUP_OUTPUT_DIR: ${{ runner.temp }}/menteclear-respaldo
     steps:
       - name: Obtener código
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -46,6 +45,8 @@ jobs:
           project_id: ${{ vars.BACKUP_PROJECT_ID }}
 
       - name: Crear copia cifrada
+        env:
+          BACKUP_OUTPUT_DIR: ${{ runner.temp }}/menteclear-respaldo
         run: pnpm respaldo:crear
 
       - name: Conservar copia durante 30 días
