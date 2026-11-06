@@ -41,8 +41,8 @@ export function PaginaPoliticaPrivacidad({
             Política de privacidad
           </h1>
           <p>
-            Versión 4 · Revisión del contenido:{" "}
-            <time dateTime="2026-11-05">5 de noviembre de 2026</time>.
+            Versión 5 · Revisión del contenido:{" "}
+            <time dateTime="2026-11-06">6 de noviembre de 2026</time>.
           </p>
           <p>
             MenteClear es un prototipo académico de estimulación cognitiva y
@@ -142,10 +142,13 @@ export function PaginaPoliticaPrivacidad({
             2. Dónde se procesan los datos y qué servicios intervienen
           </h2>
           <p>
-            La web se publica en Firebase Hosting. El backend se ejecuta en
-            Render y procesa las operaciones de cuenta, sesiones, resultados y
-            progreso. Cloud Firestore, de Google, almacena la información de la
-            aplicación. Firebase Authentication gestiona la identidad de acceso.
+            La web se publica en Firebase Hosting. El backend principal se
+            ejecuta en Google Cloud Run y procesa las operaciones de cuenta,
+            sesiones, resultados y progreso. Cloud Firestore, de Google,
+            almacena la información de la aplicación. Firebase Authentication
+            gestiona la identidad de acceso. El servicio anterior de Render se
+            conserva temporalmente para poder volver a una versión funcional
+            durante la migración.
           </p>
           <p>
             El envío opcional de recordatorios está integrado con Resend. Si se
@@ -163,14 +166,15 @@ export function PaginaPoliticaPrivacidad({
             los servicios externos.
           </p>
           <p>
-            La configuración verificada el 5 de noviembre de 2026 ubica
-            Firestore en São Paulo, Brasil (región southamerica-east1), y el
-            backend de Render en la región Virginia, Estados Unidos, fuera de
-            Argentina. Falta confirmar con el titular las condiciones de los
-            proveedores, la ubicación de los demás servicios y el tratamiento de
-            las transferencias internacionales. No hay cuentas separadas para
-            familiares ni profesionales, ni una función para compartirles
-            automáticamente tu historial.
+            La configuración verificada el 6 de noviembre de 2026 ubica
+            Firestore y el backend de Cloud Run en São Paulo, Brasil (región
+            southamerica-east1), fuera de Argentina. El servicio anterior de
+            Render está en Virginia, Estados Unidos. Falta confirmar con el
+            titular las condiciones de los proveedores, la ubicación de los
+            demás servicios y el tratamiento de las transferencias
+            internacionales. No hay cuentas separadas para familiares ni
+            profesionales, ni una función para compartirles automáticamente tu
+            historial.
           </p>
         </section>
         <section aria-labelledby="privacy-device" className="space-y-3">
@@ -343,11 +347,20 @@ export function PaginaPoliticaPrivacidad({
             de la cuenta.
           </p>
           <p>
-            Se programa una copia lógica diaria de los documentos de Firestore
-            mediante GitHub Actions. El proceso utiliza acceso temporal de solo
-            lectura y cifra las copias antes de guardarlas como archivos
-            privados de ejecución en GitHub, con una conservación de hasta
-            treinta días. La clave privada de recuperación se conserva por
+            Cloud Firestore tiene configurada una copia de seguridad nativa
+            diaria, con conservación de treinta días en la misma región de la
+            base. Google determina el horario de ejecución. La programación no
+            significa que la primera copia ya esté disponible: el responsable
+            debe comprobar las copias creadas y verificar la recuperación antes
+            de presentarla como un procedimiento probado. La recuperación a un
+            punto en el tiempo sigue deshabilitada.
+          </p>
+          <p>
+            Como apoyo, se programa una copia lógica diaria de los documentos de
+            Firestore mediante GitHub Actions. El proceso utiliza acceso
+            temporal de solo lectura y cifra las copias antes de guardarlas como
+            archivos privados de ejecución en GitHub, con una conservación de
+            hasta treinta días. La clave privada de recuperación se conserva por
             separado, bajo responsabilidad del titular del proyecto. GitHub
             participa como proveedor de procesamiento y almacenamiento de estas
             copias; la aplicación no configura una región de almacenamiento para
@@ -367,10 +380,10 @@ export function PaginaPoliticaPrivacidad({
             proveedores o cambios de configuración. Se limita la cantidad de
             consultas y el tamaño de los archivos, y una ejecución incompleta no
             publica una copia. El responsable debe supervisar las ejecuciones y
-            comprobar la recuperación. Las copias no incluyen contraseñas ni las
-            cuentas administradas por Firebase Authentication. Los respaldos
-            nativos programados y la recuperación a un punto en el tiempo de
-            Firestore continúan deshabilitados; esta copia propia no los activa.
+            comprobar la recuperación. Tanto las copias nativas de Firestore
+            como las copias lógicas incluyen datos de aplicación; no incluyen
+            contraseñas ni las cuentas administradas por Firebase
+            Authentication, que requieren un procedimiento separado.
           </p>
         </section>
         <section aria-labelledby="privacy-review" className="space-y-3">

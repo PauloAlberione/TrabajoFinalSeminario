@@ -33,7 +33,7 @@ export function AvisoConexionServidor() {
       </p>
       <p>
         {estado === "demorada"
-          ? "Si estuvo sin uso, el servidor puede tardar alrededor de un minuto en iniciarse. Estamos reintentando la conexión."
+          ? "Si estuvo sin uso, el servidor puede necesitar unos momentos para iniciarse. Estamos reintentando la conexión."
           : "Revisá tu conexión a internet y volvé a intentar."}
       </p>
       {estado === "sinConexion" && (
