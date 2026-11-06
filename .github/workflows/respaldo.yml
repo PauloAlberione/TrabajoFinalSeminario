@@ -1,0 +1,86 @@
+name: Copia diaria de Firestore
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  actions: write
+
+concurrency:
+  group: respaldo-firestore
+  cancel-in-progress: false
+
+jobs:
+  respaldo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      FIREBASE_PROJECT_ID: ${{ vars.BACKUP_PROJECT_ID }}
+      BACKUP_PUBLIC_KEY: ${{ vars.BACKUP_PUBLIC_KEY }}
+      BACKUP_OUTPUT_DIR: ${{ runner.temp }}/menteclear-respaldo
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: "22"
+
+      - name: Instalar dependencias
+        run: |
+          npm install --global pnpm@10.34.3
+          pnpm install --frozen-lockfile
+
+      - name: Obtener acceso temporal de solo lectura
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
+        with:
+          workload_identity_provider: ${{ vars.BACKUP_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.BACKUP_SERVICE_ACCOUNT }}
+          project_id: ${{ vars.BACKUP_PROJECT_ID }}
+
+      - name: Crear copia cifrada
+        run: pnpm respaldo:crear
+
+      - name: Conservar copia durante 30 días
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: respaldo-firestore-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/menteclear-respaldo/*.mcr
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
+
+      - name: Conservar una copia por día y comprobar espacio
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+        with:
+          script: |
+            const archivos = await github.paginate(github.rest.actions.listArtifactsForRepo, {
+              ...context.repo,
+              per_page: 100,
+            });
+            const copias = archivos
+              .filter((archivo) => /^respaldo-firestore-\d+-\d+$/.test(archivo.name))
+              .sort((primero, segundo) => segundo.id - primero.id);
+            const dias = new Set();
+            let bytes = 0;
+            const vencimiento = Date.now() - 30 * 24 * 60 * 60 * 1000;
+            for (const archivo of copias) {
+              const dia = archivo.created_at.slice(0, 10);
+              if (dias.has(dia) || Date.parse(archivo.created_at) < vencimiento) {
+                await github.rest.actions.deleteArtifact({ ...context.repo, artifact_id: archivo.id });
+              } else {
+                dias.add(dia);
+                bytes += archivo.size_in_bytes;
+              }
+            }
+            if (bytes > 250 * 1024 * 1024) {
+              core.setFailed("Las copias superan el presupuesto de almacenamiento de 250 MiB. Revisá la capacidad.");
+            }
+            core.info(`Copias conservadas: ${dias.size}. Bytes: ${bytes}.`);

@@ -7,6 +7,7 @@ import type { ConsultaHistorial } from "../../compartido/historial"
 import type { PuntoControlEjercicio } from "../../compartido/sesionEjercicio"
 import type { SesionResultadoSolicitud } from "../../compartido/resultados"
 import { autenticacionFirebase } from "./firebase"
+import { conexionServidor } from "./conexionServidor"
 
 const direccionApi = import.meta.env.VITE_BACKEND_URL?.trim()
 
@@ -22,6 +23,8 @@ async function autenticadoRespuesta(
     error.name = "BackendConfigurationError"
     throw error
   }
+  if (!opciones.keepalive) await conexionServidor.esperar(opciones.signal)
+  opciones.signal?.throwIfAborted()
   const token = autenticar
     ? await autenticacionFirebase?.currentUser?.getIdToken()
     : undefined
@@ -33,6 +36,7 @@ async function autenticadoRespuesta(
       ...opciones.headers,
     },
   })
+  conexionServidor.registrarRespuesta()
   if (!respuesta.ok) {
     const cuerpo = await respuesta.json().catch(() => ({}))
     const error = new Error(

@@ -41,7 +41,7 @@ export function PaginaPoliticaPrivacidad({
             Política de privacidad
           </h1>
           <p>
-            Versión 3 · Revisión del contenido:{" "}
+            Versión 4 · Revisión del contenido:{" "}
             <time dateTime="2026-11-05">5 de noviembre de 2026</time>.
           </p>
           <p>
@@ -167,9 +167,9 @@ export function PaginaPoliticaPrivacidad({
             Firestore en São Paulo, Brasil (región southamerica-east1), y el
             backend de Render en la región Virginia, Estados Unidos, fuera de
             Argentina. Falta confirmar con el titular las condiciones de los
-            proveedores, la ubicación de los demás servicios y el tratamiento
-            de las transferencias internacionales. No hay cuentas separadas
-            para familiares ni profesionales, ni una función para compartirles
+            proveedores, la ubicación de los demás servicios y el tratamiento de
+            las transferencias internacionales. No hay cuentas separadas para
+            familiares ni profesionales, ni una función para compartirles
             automáticamente tu historial.
           </p>
         </section>
@@ -343,14 +343,34 @@ export function PaginaPoliticaPrivacidad({
             de la cuenta.
           </p>
           <p>
-            La consulta de configuración del 2 de noviembre de 2026 no encontró
-            backups programados ni backups registrados en el proyecto. PITR
-            estaba deshabilitado y la API informó una retención de versiones de
-            una hora. Es una comprobación puntual, no una promesa de
-            configuración futura ni prueba de que no existan exportaciones o
-            copias externas. La baja elimina los datos activos; no garantiza que
-            todas las versiones históricas desaparezcan de inmediato. El titular
-            debe revisar y comunicar cualquier cambio de conservación o backups.
+            Se programa una copia lógica diaria de los documentos de Firestore
+            mediante GitHub Actions. El proceso utiliza acceso temporal de solo
+            lectura y cifra las copias antes de guardarlas como archivos
+            privados de ejecución en GitHub, con una conservación de hasta
+            treinta días. La clave privada de recuperación se conserva por
+            separado, bajo responsabilidad del titular del proyecto. GitHub
+            participa como proveedor de procesamiento y almacenamiento de estas
+            copias; la aplicación no configura una región de almacenamiento para
+            ellas.
+          </p>
+          <p>
+            Estas copias incluyen los datos de aplicación existentes en el
+            momento de lectura, incluidos datos de cuentas que posteriormente
+            puedan eliminarse. La baja no modifica de inmediato las copias ya
+            generadas: vencen según su conservación. Cualquier recuperación debe
+            revisar las bajas posteriores para evitar reintroducir datos
+            eliminados. Las copias descargadas por el responsable requieren su
+            propia gestión y eliminación.
+          </p>
+          <p>
+            La tarea puede fallar o demorarse por límites de uso, errores de los
+            proveedores o cambios de configuración. Se limita la cantidad de
+            consultas y el tamaño de los archivos, y una ejecución incompleta no
+            publica una copia. El responsable debe supervisar las ejecuciones y
+            comprobar la recuperación. Las copias no incluyen contraseñas ni las
+            cuentas administradas por Firebase Authentication. Los respaldos
+            nativos programados y la recuperación a un punto en el tiempo de
+            Firestore continúan deshabilitados; esta copia propia no los activa.
           </p>
         </section>
         <section aria-labelledby="privacy-review" className="space-y-3">

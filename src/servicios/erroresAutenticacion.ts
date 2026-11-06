@@ -1,5 +1,7 @@
 export function mensajeErrorFirebase(error: unknown): string {
   const codigo = codigoErrorFirebase(error)
+  if (error instanceof Error && error.name === "BackendUnavailableError")
+    return error.message
   if (error instanceof Error && error.name === "BackendConfigurationError")
     return "El backend no está configurado. Define VITE_BACKEND_URL y levanta el servidor antes de registrarte."
   if (error instanceof Error && error.name.startsWith("BackendHttpError"))

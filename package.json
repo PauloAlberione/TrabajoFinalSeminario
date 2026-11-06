@@ -9,6 +9,9 @@
     "preview": "vite preview",
     "backend:dev": "node --env-file-if-exists=servidor/.env --import tsx servidor/src/principal.ts",
     "backend:build": "tsc -p servidor/tsconfig.json",
+    "respaldo:crear": "node --env-file-if-exists=servidor/.env --import tsx servidor/src/tareas/respaldo.ts crear",
+    "respaldo:verificar": "node --import tsx servidor/src/tareas/respaldo.ts verificar",
+    "respaldo:restaurar": "node --import tsx servidor/src/tareas/respaldo.ts restaurar",
     "test": "tsx --test servidor/src/**/*.prueba.ts",
     "logs": "node --env-file-if-exists=.env --env-file-if-exists=.env.local servidor/registro-servidor.mjs",
     "format": "oxfmt"

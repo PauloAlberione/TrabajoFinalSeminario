@@ -14,4 +14,7 @@ servidor/src/pruebas/**
 **/service-account*.json
 **/firebase-admin.json
 **/*.pem
+servidor/src/tareas/**
+**/gha-creds-*.json
+**/*.mcr
 **/*.log

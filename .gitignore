@@ -20,6 +20,9 @@ logs/
 service-account*.json
 firebase-admin.json
 *.pem
+respaldos-locales/
+*.mcr
+gha-creds-*.json
 AGENTS.md
 CLAUDE.md
 agents.md

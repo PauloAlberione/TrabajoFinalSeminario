@@ -152,7 +152,9 @@ export default function Aplicacion() {
         } catch (error) {
           if (version !== versionSolicitudAutenticacion.current) return
           establecerErrorAutenticacion(
-            "No pudimos cargar tu perfil. Revisá tu conexión e intentá nuevamente.",
+            error instanceof Error && error.name === "BackendUnavailableError"
+              ? error.message
+              : "No pudimos cargar tu perfil. Revisá tu conexión e intentá nuevamente.",
           )
           registrarEvento("error", "auth.session_load_failed", {
             code: codigoErrorFirebase(error),
