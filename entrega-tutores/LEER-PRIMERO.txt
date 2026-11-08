@@ -18,8 +18,9 @@ El código no incluye claves administrativas ni archivos de entorno privados.
 
 REPOSITORIO GITHUB
 https://github.com/PauloAlberione/TrabajoFinalSeminario
-El repositorio es privado. Para verlo, el autor debe invitar al tutor como colaborador
-y este debe aceptar la invitación con su cuenta de GitHub. El enlace por sí solo no da acceso.
+Si el repositorio es público, se puede consultar y descargar directamente.
+Si es privado, el autor debe invitar al tutor como colaborador y este debe aceptar
+la invitación con su cuenta de GitHub. En ese caso, el enlace por sí solo no da acceso.
 El ZIP de Drive puede descargarse sin tener acceso al repositorio.
 
 RECORRIDO SUGERIDO

@@ -16,11 +16,11 @@ El frontend está publicado en Firebase Hosting; el backend funciona en Google C
 
 ## Descargar el código
 
-Desde la carpeta de entrega de Google Drive, descargar `TFG-Alberione-codigo-fuente.zip` y descomprimirlo. Abrir la carpeta `MenteClear` con Visual Studio Code o una terminal. No es necesario tener acceso al repositorio privado de GitHub.
+Desde la carpeta de entrega de Google Drive, descargar `TFG-Alberione-codigo-fuente.zip` y descomprimirlo. Abrir la carpeta `MenteClear` con Visual Studio Code o una terminal. Esta copia puede utilizarse sin acceso a GitHub.
 
 El ZIP incluye código, pruebas, dependencias declaradas y ejemplos de configuración. No incluye datos de usuarios, claves administrativas ni archivos de entorno privados.
 
-El repositorio es https://github.com/PauloAlberione/TrabajoFinalSeminario. Su acceso es privado: para consultarlo en GitHub, el autor debe invitar al tutor como colaborador y este debe aceptar la invitación con su cuenta. Compartir solamente el enlace no otorga acceso.
+El código también está disponible en https://github.com/PauloAlberione/TrabajoFinalSeminario. Si el repositorio es público, se puede consultar y descargar directamente. Si es privado, el autor debe invitar al tutor como colaborador y este debe aceptar la invitación con su cuenta; compartir solamente el enlace no otorga acceso.
 
 Quienes tengan acceso pueden usar **Code → Download ZIP** y abrir la carpeta extraída, o clonar el repositorio:
 
@@ -29,7 +29,7 @@ git clone https://github.com/PauloAlberione/TrabajoFinalSeminario.git
 cd TrabajoFinalSeminario
 ```
 
-El clon requiere autenticación de GitHub; no se deben incluir tokens de acceso en los comandos ni compartirlos en la entrega. El ZIP de Drive permite revisar el código sin una cuenta de GitHub.
+Si el repositorio es privado, el clon requiere autenticación de GitHub. No se deben incluir tokens de acceso en los comandos ni compartirlos en la entrega. El ZIP de Drive permite revisar el código sin una cuenta de GitHub.
 
 ## Requisitos para ejecutarlo localmente
 
