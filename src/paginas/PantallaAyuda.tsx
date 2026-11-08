@@ -199,7 +199,7 @@ export const preguntasFrecuentes: PreguntaFrecuente[] = [
     id: "graficos",
     pregunta: "¿Qué significan los gráficos de progreso?",
     respuesta:
-      "Los gráficos muestran cómo ha evolucionado tu rendimiento a lo largo del tiempo. La barra semanal indica cuántas sesiones realizaste cada día. La línea de precisión muestra el porcentaje de aciertos por día. Las barras horizontales comparan tu rendimiento entre categorías cognitivas. Así puedes ver fácilmente en qué áreas mejoras y cuáles puedes reforzar.",
+      'En "Progreso → Actividad" podés elegir un gráfico de ejercicios completados, precisión o tiempo activo por fecha. En "Categorías" podés consultar tus resultados y comparar categorías. Cada gráfico ofrece una tabla con los valores exactos. La precisión se calcula con todos los aciertos y errores del período. Para comparar resultados, tené en cuenta el tipo de ejercicio y su dificultad: una variación del porcentaje no demuestra por sí sola una mejora cognitiva.',
   },
   {
     id: "preferencias",

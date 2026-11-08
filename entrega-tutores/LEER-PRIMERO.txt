@@ -1,0 +1,39 @@
+MENTECLEAR — TRABAJO FINAL DE GRADO
+Autor: Paulo Tomás Alberione
+
+PROBAR LA PLATAFORMA
+https://menteclear.web.app
+
+Abrir la dirección en un navegador actualizado. No es necesario instalar nada.
+Se puede crear una cuenta desde el registro. No se entregan cuentas compartidas.
+Los datos y resultados de cada cuenta son privados.
+
+CÓDIGO FUENTE E INSTALACIÓN LOCAL
+Descargar TFG-Alberione-codigo-fuente.zip y descomprimirlo.
+Dentro de la carpeta MenteClear, abrir README.md.
+El mismo README está disponible por separado en esta carpeta de entrega.
+Indica cómo instalar Node.js y pnpm, configurar Firebase e iniciar frontend y backend.
+La instalación local completa necesita un proyecto Firebase propio o acceso a uno de pruebas autorizado.
+El código no incluye claves administrativas ni archivos de entorno privados.
+
+REPOSITORIO GITHUB
+https://github.com/PauloAlberione/TrabajoFinalSeminario
+El repositorio es privado. Para verlo, el autor debe invitar al tutor como colaborador
+y este debe aceptar la invitación con su cuenta de GitHub. El enlace por sí solo no da acceso.
+El ZIP de Drive puede descargarse sin tener acceso al repositorio.
+
+RECORRIDO SUGERIDO
+Registro o ingreso → Ejercicios → Categoría → Instrucciones → Realizar actividad
+→ Resultado → Progreso / Historial → Estadísticas → Exportar PDF → Perfil → Cerrar sesión.
+
+ARCHIVOS DE LA ENTREGA
+- LEER-PRIMERO.txt: acceso y orientación inicial.
+- README.md: instrucciones de instalación y configuración.
+- TFG-Alberione-codigo-fuente.zip: código y pruebas automatizadas.
+- TFG-Alberione-codigo-fuente.sha256: suma de comprobación del ZIP.
+El video y el informe final se incorporan a la carpeta de Drive al completar la entrega.
+
+ALCANCE
+El prototipo permite realizar ejercicios de estimulación cognitiva y consultar su desempeño.
+No es una herramienta de diagnóstico ni una evaluación clínica.
+Los recordatorios programados por correo requieren configuración externa adicional.

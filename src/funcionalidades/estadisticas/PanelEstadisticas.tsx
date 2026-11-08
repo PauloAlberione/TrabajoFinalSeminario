@@ -245,6 +245,9 @@ export function PanelEstadisticas({
   const [graficoActual, establecerGraficoActual] =
     useState<"ejercicios" | "precision" | "tiempo">("ejercicios")
   const { period: periodo, lifetime: historico } = informe
+  const diasConActividad = informe.daily.filter(
+    (dia) => dia.completedExercises > 0,
+  ).length
   const graficosActividad = {
     ejercicios: {
       titulo: "Actividad por fecha",
@@ -334,6 +337,16 @@ export function PanelEstadisticas({
             aparecerán aquí cuando termines.
           </p>
         </div>
+      )}
+      {periodo.completedExercises > 0 && diasConActividad < 2 && (
+        <p
+          role="status"
+          className="p-5 rounded-2xl border border-border bg-card"
+        >
+          Todavía no hay actividad en dos fechas distintas para comparar tu
+          desempeño a través del tiempo. Mostramos los resultados disponibles;
+          podés seguir practicando a tu ritmo.
+        </p>
       )}
       {vista === "resumen" && (
         <div className="space-y-6 transicion-pantalla" key="resumen">

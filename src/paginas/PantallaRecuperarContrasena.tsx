@@ -9,6 +9,7 @@ import {
   codigoErrorFirebase,
   mensajeErrorFirebase,
 } from "../servicios/erroresAutenticacion"
+import { REQUISITOS_CONTRASENA } from "../servicios/politicaContrasena"
 
 export function PantallaRecuperarContrasena({
   onBack: alVolver,
@@ -89,6 +90,12 @@ export function PantallaRecuperarContrasena({
           >
             Revisá tu bandeja de entrada y seguí las instrucciones del correo
             para crear una nueva contraseña. La recepción puede demorar.
+          </p>
+          <p
+            className="text-base mb-3 leading-relaxed"
+            style={{ color: "var(--muted-foreground)" }}
+          >
+            {REQUISITOS_CONTRASENA}
           </p>
           <p
             className="text-base mb-10 leading-relaxed"

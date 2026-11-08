@@ -1,3 +1,5 @@
+import { REQUISITOS_CONTRASENA } from "./politicaContrasena"
+
 export function mensajeErrorFirebase(error: unknown): string {
   const codigo = codigoErrorFirebase(error)
   if (error instanceof Error && error.name === "BackendUnavailableError")
@@ -28,8 +30,11 @@ export function mensajeErrorFirebase(error: unknown): string {
     return "Ya existe una cuenta con ese correo electrónico."
   if (codigo.includes("invalid-email"))
     return "Introduce un correo electrónico válido."
-  if (codigo.includes("weak-password"))
-    return "La contraseña no cumple los requisitos mínimos."
+  if (
+    codigo.includes("weak-password") ||
+    codigo.includes("password-does-not-meet-requirements")
+  )
+    return REQUISITOS_CONTRASENA
   if (codigo.includes("too-many-requests"))
     return "Se hicieron demasiados intentos. Espera unos minutos y vuelve a intentarlo."
   return "No pudimos completar la operación. Comprueba tu conexión e inténtalo nuevamente."

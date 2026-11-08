@@ -11,9 +11,12 @@ const firebaseConfiguracion = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
 
-export const estaFirebaseConfigurado = Object.values(
-  firebaseConfiguracion,
-).every(Boolean)
+export const estaFirebaseConfigurado = Boolean(
+  firebaseConfiguracion.apiKey &&
+    firebaseConfiguracion.authDomain &&
+    firebaseConfiguracion.projectId &&
+    firebaseConfiguracion.appId,
+)
 
 const firebaseAplicacion = estaFirebaseConfigurado
   ? getApps().length > 0

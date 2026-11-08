@@ -1,5 +1,5 @@
 import { fechaNacimientoValida } from "../../compartido/perfil"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import {
   createUserWithEmailAndPassword,
   deleteUser,
@@ -15,6 +15,10 @@ import {
   codigoErrorFirebase,
   mensajeErrorFirebase,
 } from "../servicios/erroresAutenticacion"
+import {
+  REQUISITOS_CONTRASENA,
+  validarContrasena,
+} from "../servicios/politicaContrasena"
 
 export function PantallaRegistro({
   onBack: alVolver,
@@ -34,6 +38,7 @@ export function PantallaRegistro({
   })
   const [error, establecerError] = useState("")
   const [cargando, establecerCargando] = useState(false)
+  const enviando = useRef(false)
 
   function actualizarCampo(campo: keyof typeof formulario, valor: string) {
     establecerFormulario((actual) => ({ ...actual, [campo]: valor }))
@@ -41,6 +46,7 @@ export function PantallaRegistro({
   }
 
   async function manejarEnviar() {
+    if (enviando.current) return
     const nombrePatron = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s'-]+$/
     const correoPatron = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const fechaNacimiento = formulario.fechaNacimiento
@@ -76,8 +82,9 @@ export function PantallaRegistro({
       establecerError("Introduce un correo electrónico válido.")
       return
     }
-    if (formulario.password.length < 8) {
-      establecerError("La contraseña debe tener al menos 8 caracteres.")
+    const errorContrasena = validarContrasena(formulario.password)
+    if (errorContrasena) {
+      establecerError(errorContrasena)
       return
     }
     if (formulario.password !== formulario.confirmPassword) {
@@ -92,6 +99,7 @@ export function PantallaRegistro({
       return
     }
 
+    enviando.current = true
     establecerCargando(true)
     let etapa = "authentication"
     let creadoUsuario: FirebaseUser | null = null
@@ -135,6 +143,7 @@ export function PantallaRegistro({
       })
       establecerError(mensajeErrorFirebase(error))
     } finally {
+      enviando.current = false
       establecerCargando(false)
     }
   }
@@ -174,14 +183,23 @@ export function PantallaRegistro({
           </p>
         </div>
 
-        <div
+        <form
+          noValidate
+          aria-busy={cargando}
+          onSubmit={(evento) => {
+            evento.preventDefault()
+            void manejarEnviar()
+          }}
           className="rounded-3xl p-8 md:p-10"
           style={{
             background: "var(--card)",
             border: "1.5px solid var(--border)",
           }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <fieldset
+            disabled={cargando}
+            className="grid grid-cols-1 md:grid-cols-2 gap-5 min-w-0"
+          >
             <div>
               <label
                 className="block text-base font-bold mb-2"
@@ -299,7 +317,18 @@ export function PantallaRegistro({
                 }
                 placeholder="Mínimo 8 caracteres"
                 autoComplete="new-password"
+                minLength={8}
+                maxLength={4096}
+                required
+                aria-describedby="register-password-help"
               />
+              <p
+                id="register-password-help"
+                className="mt-2 text-base leading-relaxed"
+                style={{ color: "var(--muted-foreground)" }}
+              >
+                {REQUISITOS_CONTRASENA}
+              </p>
             </div>
             <div>
               <label
@@ -319,12 +348,15 @@ export function PantallaRegistro({
                 }
                 placeholder="Repite tu contraseña"
                 autoComplete="new-password"
+                maxLength={4096}
+                required
               />
             </div>
-          </div>
+          </fieldset>
 
           {error && (
             <div
+              role="alert"
               className="mt-6 px-5 py-4 rounded-2xl flex items-start gap-3"
               style={{ background: "#F5E0DB", border: "1.5px solid #B86A5A" }}
             >
@@ -339,7 +371,7 @@ export function PantallaRegistro({
           )}
 
           <button
-            onClick={manejarEnviar}
+            type="submit"
             disabled={cargando}
             className="w-full mt-7 py-5 rounded-2xl text-xl font-bold transition-all hover:opacity-90"
             style={{
@@ -351,7 +383,9 @@ export function PantallaRegistro({
             {cargando ? "Creando cuenta..." : "Crear cuenta"}
           </button>
           <button
+            type="button"
             onClick={alVolver}
+            disabled={cargando}
             className="w-full mt-3 py-4 rounded-2xl text-lg font-bold hover:opacity-80 transition-opacity"
             style={{
               background: "var(--muted)",
@@ -371,7 +405,7 @@ export function PantallaRegistro({
             </a>
             .
           </p>
-        </div>
+        </form>
       </div>
     </div>
   )
