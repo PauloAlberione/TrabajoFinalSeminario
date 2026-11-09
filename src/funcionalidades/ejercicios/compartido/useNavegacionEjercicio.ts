@@ -13,6 +13,10 @@ import {
   propietarioToken,
 } from "../../../servicios/api"
 import type { PuntoControlEjercicio } from "../../../../compartido/sesionEjercicio"
+import {
+  SESION_POR_VENCER_EVENTO,
+  type AvisoVencimientoSesion,
+} from "../../../servicios/politicaSesion"
 
 export const EJERCICIO_NAVEGACION_EVENTO = "exercise:navigate"
 
@@ -418,6 +422,23 @@ export function useNavegacionEjercicio({
   useLayoutEffect(() => {
     if (activo && !permitirNavegacion.current) capturar()
   })
+  useEffect(() => {
+    if (!activo || !idSesion) return
+    const alVencer = (evento: Event) => {
+      suspendido.current = true
+      capturar()
+      if (!bloqueado()) {
+        actual.current.setPaused(true)
+        actual.current.setBusy(true)
+        const guardarPausa = escribir("paused", true)
+        ;(evento as CustomEvent<AvisoVencimientoSesion>).detail.esperar(
+          guardarPausa,
+        )
+      }
+    }
+    window.addEventListener(SESION_POR_VENCER_EVENTO, alVencer)
+    return () => window.removeEventListener(SESION_POR_VENCER_EVENTO, alVencer)
+  }, [activo, idSesion, escribir])
   useEffect(() => {
     if (!activo || !idSesion) return
     const sincronizar = () => {

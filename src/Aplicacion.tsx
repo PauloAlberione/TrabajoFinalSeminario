@@ -23,11 +23,14 @@ import { EJERCICIO_NAVEGACION_EVENTO } from "./funcionalidades/ejercicios/compar
 import { EjercicioMemoria } from "./funcionalidades/ejercicios/memoria/EjercicioMemoria"
 import { tiposMemoria, type TipoMemoria } from "../compartido/memoria"
 import { useEffect, useState, useRef } from "react"
+import { type User as FirebaseUser } from "firebase/auth"
 import {
-  onAuthStateChanged,
-  signOut,
-  type User as FirebaseUser,
-} from "firebase/auth"
+  cerrarSesion,
+  guardarAvisoAcceso,
+  leerAvisoAcceso,
+  observarSesionAutenticada,
+  retirarAvisoAcceso,
+} from "./servicios/sesionAutenticacion"
 import { autenticacionFirebase } from "./servicios/firebase"
 import { registrarEvento } from "./servicios/registro"
 import {
@@ -66,6 +69,8 @@ export default function Aplicacion() {
     leerPendienteEliminacion,
   )
   const [avisoEliminacion, establecerAvisoEliminacion] = useState("")
+  const [avisoAcceso, establecerAvisoAcceso] = useState(leerAvisoAcceso)
+  useEffect(retirarAvisoAcceso, [])
   useEffect(() => {
     const pendiente = () =>
       establecerEliminacionPendiente(leerPendienteEliminacion())
@@ -101,7 +106,7 @@ export default function Aplicacion() {
       establecerCargandoAutenticacion(false)
       return
     }
-    const darBaja = onAuthStateChanged(
+    const darBaja = observarSesionAutenticada(
       autenticacionFirebase,
       async (usuario) => {
         const version = ++versionSolicitudAutenticacion.current
@@ -113,6 +118,7 @@ export default function Aplicacion() {
         if (usuario) establecerCargandoAutenticacion(true)
         if (!usuario) {
           establecerPerfil(null)
+          establecerPantalla("home")
           establecerEstadoAplicacion("login")
           establecerCargandoAutenticacion(false)
           return
@@ -162,6 +168,12 @@ export default function Aplicacion() {
         }
         if (version === versionSolicitudAutenticacion.current)
           establecerCargandoAutenticacion(false)
+      },
+      () => {
+        const aviso =
+          "Tu sesión venció. Volvé a iniciar sesión para continuar. El avance guardado de tus actividades sigue disponible."
+        guardarAvisoAcceso(aviso)
+        establecerAvisoAcceso(aviso)
       },
     )
     return () => {
@@ -290,7 +302,7 @@ export default function Aplicacion() {
         </button>
         <button
           className="m-4 px-8 py-4"
-          onClick={() => void signOut(autenticacionFirebase!)}
+          onClick={() => void cerrarSesion(autenticacionFirebase!)}
         >
           Cerrar sesión
         </button>
@@ -304,8 +316,17 @@ export default function Aplicacion() {
             {avisoEliminacion}
           </p>
         )}
+        {avisoAcceso && (
+          <p role="status" className="p-5 text-lg bg-muted">
+            {avisoAcceso}
+          </p>
+        )}
         <PantallaIngreso
-          onLogin={() => establecerEstadoAplicacion("app")}
+          onLogin={() => {
+            establecerAvisoAcceso("")
+            retirarAvisoAcceso()
+            establecerEstadoAplicacion("app")
+          }}
           onForgot={() => establecerEstadoAplicacion("forgot")}
           onRegister={() => establecerEstadoAplicacion("register")}
         />
@@ -482,7 +503,7 @@ export default function Aplicacion() {
               if (autenticacionFirebase?.currentUser?.uid === actualizado.uid)
                 establecerPerfil(actualizado)
             }}
-            onLogout={() => signOut(autenticacionFirebase!)}
+            onLogout={() => cerrarSesion(autenticacionFirebase!)}
           />
         )}
         {pantalla === "help" && <PantallaAyuda onNavigate={navegar} />}

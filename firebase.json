@@ -7,6 +7,15 @@
     "target": "web",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "headers": [
+      {
+        "source": "/cuenta/**",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-store" },
+          { "key": "Referrer-Policy", "value": "strict-origin" }
+        ]
+      }
+    ],
     "rewrites": [
       {
         "source": "**",

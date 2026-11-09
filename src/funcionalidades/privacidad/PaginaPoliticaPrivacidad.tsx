@@ -41,8 +41,8 @@ export function PaginaPoliticaPrivacidad({
             Política de privacidad
           </h1>
           <p>
-            Versión 5 · Revisión del contenido:{" "}
-            <time dateTime="2026-11-06">6 de noviembre de 2026</time>.
+            Versión 6 · Revisión del contenido:{" "}
+            <time dateTime="2026-11-08">8 de noviembre de 2026</time>.
           </p>
           <p>
             MenteClear es un prototipo académico de estimulación cognitiva y
@@ -182,7 +182,13 @@ export function PaginaPoliticaPrivacidad({
             3. Información en tu dispositivo y registros técnicos
           </h2>
           <p>
-            Firebase puede conservar el estado de autenticación en el navegador.
+            Firebase conserva el estado de autenticación en la pestaña hasta
+            cuatro horas desde el ingreso. Si elegís «Mantener sesión iniciada»,
+            utiliza almacenamiento persistente del navegador durante un máximo
+            de siete días. MenteClear conserva localmente el identificador de
+            cuenta, el momento del ingreso y esa elección para controlar el
+            vencimiento; no guarda la contraseña en ese control. Recargar no
+            extiende el plazo y al vencer se solicita ingresar nuevamente.
             MenteClear usa almacenamiento local y de pestaña para identificar
             actividades pendientes, conservar avances y controlar su
             recuperación entre pestañas. También guarda registros técnicos

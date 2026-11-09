@@ -211,7 +211,13 @@ export const preguntasFrecuentes: PreguntaFrecuente[] = [
     id: "contrasena",
     pregunta: "¿Qué hago si olvidé mi contraseña?",
     respuesta:
-      'En la pantalla de inicio de sesión, haz clic en el enlace "¿Olvidaste tu contraseña?". Introduce tu correo electrónico y recibirás un mensaje con instrucciones para restablecer tu contraseña. Si no encuentras el correo, revisa la carpeta de correo no deseado o spam.',
+      'En el ingreso, elegí "¿Olvidaste tu contraseña?" y escribí tu correo. Si hay una cuenta habilitada, recibirás un enlace para elegir una nueva contraseña desde MenteClear. Debe tener al menos ocho caracteres, una mayúscula A–Z y una minúscula a–z. Después del cambio volverás al ingreso. Si el enlace venció o ya se usó, solicitá otro. Revisá también la carpeta de spam.',
+  },
+  {
+    id: "duracion-sesion",
+    pregunta: "¿Cuánto tiempo permanece abierta mi sesión?",
+    respuesta:
+      'Sin marcar "Mantener sesión iniciada", el acceso dura hasta cuatro horas desde el ingreso y se conserva solo en esta pestaña. Si marcás la casilla, se recuerda hasta siete días en el dispositivo. El plazo no vuelve a empezar al recargar. Cuando vence, debés ingresar nuevamente; el avance guardado de tus actividades sigue disponible. En un dispositivo compartido, dejá la casilla desmarcada y cerrá sesión al terminar.',
   },
   {
     id: "alcance",

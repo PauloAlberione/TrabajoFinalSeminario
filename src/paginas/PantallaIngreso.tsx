@@ -1,5 +1,9 @@
-import { useState } from "react"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import { useRef, useState } from "react"
+import { ingresarConCorreo } from "../servicios/sesionAutenticacion"
+import {
+  DURACION_SESION_HORAS,
+  DURACION_SESION_RECORDADA_DIAS,
+} from "../servicios/politicaSesion"
 import {
   autenticacionFirebase,
   estaFirebaseConfigurado,
@@ -25,8 +29,11 @@ export function PantallaIngreso({
   const [mostrarContrasena, establecerMostrarContrasena] = useState(false)
   const [error, establecerError] = useState("")
   const [cargando, establecerCargando] = useState(false)
+  const [mantenerSesion, establecerMantenerSesion] = useState(false)
+  const enviando = useRef(false)
 
   async function manejarEnviar() {
+    if (enviando.current) return
     establecerError("")
     if (!correo || !correo.includes("@")) {
       establecerError("Por favor, introduce un correo electrónico válido.")
@@ -42,12 +49,14 @@ export function PantallaIngreso({
       )
       return
     }
+    enviando.current = true
     establecerCargando(true)
     try {
-      await signInWithEmailAndPassword(
+      await ingresarConCorreo(
         autenticacionFirebase,
         correo.trim(),
         contrasena,
+        mantenerSesion,
       )
       registrarEvento("info", "auth.login_succeeded")
       alIngresar()
@@ -57,6 +66,7 @@ export function PantallaIngreso({
       })
       establecerError(mensajeErrorFirebase(error))
     } finally {
+      enviando.current = false
       establecerCargando(false)
     }
   }
@@ -158,6 +168,8 @@ export function PantallaIngreso({
               <input
                 id="login-email"
                 type="email"
+                autoComplete="email"
+                disabled={cargando}
                 value={correo}
                 onChange={(evento) => establecerCorreo(evento.target.value)}
                 onKeyDown={(evento) =>
@@ -186,6 +198,8 @@ export function PantallaIngreso({
                 <input
                   id="login-password"
                   type={mostrarContrasena ? "text" : "password"}
+                  autoComplete="current-password"
+                  disabled={cargando}
                   value={contrasena}
                   onChange={(evento) =>
                     establecerContrasena(evento.target.value)
@@ -203,6 +217,7 @@ export function PantallaIngreso({
                 />
                 <button
                   type="button"
+                  disabled={cargando}
                   aria-label={
                     mostrarContrasena
                       ? "Ocultar contraseña"
@@ -222,6 +237,7 @@ export function PantallaIngreso({
 
             <div className="text-right mb-6">
               <button
+                disabled={cargando}
                 onClick={alRecuperarContrasena}
                 className="text-base font-semibold hover:opacity-75 transition-opacity"
                 style={{ color: "var(--primary)" }}
@@ -230,8 +246,33 @@ export function PantallaIngreso({
               </button>
             </div>
 
+            <div className="mb-6">
+              <label className="flex items-center gap-3 cursor-pointer min-h-11 py-2">
+                <input
+                  type="checkbox"
+                  checked={mantenerSesion}
+                  onChange={(evento) =>
+                    establecerMantenerSesion(evento.target.checked)
+                  }
+                  disabled={cargando}
+                  aria-describedby="login-session-help"
+                  className="w-6 h-6 shrink-0 accent-primary"
+                />
+                <span className="font-semibold">Mantener sesión iniciada</span>
+              </label>
+              <p
+                id="login-session-help"
+                className="text-base text-muted-foreground mt-1"
+              >
+                {mantenerSesion
+                  ? `Se recordará tu acceso hasta ${DURACION_SESION_RECORDADA_DIAS} días. Usá esta opción solo en un dispositivo propio.`
+                  : `La sesión dura hasta ${DURACION_SESION_HORAS} horas y termina al cerrar esta pestaña.`}
+              </p>
+            </div>
+
             {error && (
               <div
+                role="alert"
                 className="mb-5 px-5 py-4 rounded-2xl flex items-start gap-3"
                 style={{ background: "#F5E0DB", border: "1.5px solid #B86A5A" }}
               >
@@ -265,6 +306,7 @@ export function PantallaIngreso({
               >
                 ¿Aún no tienes cuenta?{" "}
                 <button
+                  disabled={cargando}
                   onClick={alRegistrarse}
                   className="font-bold hover:opacity-75 transition-opacity"
                   style={{ color: "var(--primary)" }}

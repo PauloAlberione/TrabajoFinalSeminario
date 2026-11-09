@@ -68,6 +68,7 @@ En ese proyecto:
 4. Crear una base **Cloud Firestore Standard**, en modo nativo, con el identificador `(default)`.
 5. En **Configuración del proyecto → General**, registrar una aplicación web y copiar su configuración de Firebase.
 6. Preparar credenciales de backend del mismo proyecto. Una opción es generar una clave desde **Configuración del proyecto → Cuentas de servicio → Firebase Admin SDK**. Guardar ese JSON fuera de la carpeta del código. La cuenta utilizada necesita permisos para trabajar con Firestore y administrar usuarios de Authentication; no se debe dar acceso al proyecto de producción para una prueba independiente.
+7. Para usar la pantalla de restablecimiento de MenteClear, en **Authentication → Plantillas → Personalizar URL de acción**, indicar la dirección de la aplicación seguida de `/cuenta/accion`. En producción se utiliza `https://menteclear.web.app/cuenta/accion`. Para pruebas locales, configurar `http://localhost:5173/cuenta/accion` únicamente en el proyecto Firebase de pruebas y autorizar `localhost`. Este ajuste es externo al código y se aplica a las plantillas de acciones de la cuenta; las acciones distintas al cambio de contraseña conservan el formulario correspondiente de Firebase.
 
 No es necesario cargar un catálogo ni resultados de ejemplo: los ejercicios están definidos en el backend y cada usuario comienza sin historial.
 
@@ -151,6 +152,17 @@ Ejecutar solamente `pnpm dev` no inicia el backend. Para detener los procesos, u
 7. Cerrar sesión.
 
 Hay cuatro niveles: Fácil, Normal, Difícil y Muy difícil. Cada categoría mantiene su propio nivel, que cambia automáticamente según dos resultados consecutivos y los criterios explicados en **Ayuda**. No hay controles para modificarlo manualmente.
+
+## Acceso y recuperación de contraseña
+
+- Sin marcar **Mantener sesión iniciada**, el acceso dura hasta **4 horas desde el ingreso** y utiliza persistencia de pestaña. Recargar conserva el plazo original; cerrar la pestaña finaliza esa sesión de navegador.
+- Con la casilla marcada, el navegador recuerda el acceso durante un máximo de **7 días**. Usar esta opción solo en un dispositivo propio.
+- El registro inicia una sesión de pestaña de cuatro horas. Las sesiones anteriores sin este control requieren volver a ingresar para elegir la persistencia.
+- Al vencer se solicita un nuevo ingreso. Si hay un ejercicio abierto, se intenta guardar su pausa antes de cerrar el acceso; la copia local y el último estado sincronizado permiten recuperar el avance disponible. No se genera un resultado completado por el vencimiento.
+- Desde **¿Olvidaste tu contraseña?** se solicita un enlace de Firebase. La pantalla `/cuenta/accion` comprueba el enlace y permite elegir y confirmar una nueva contraseña de al menos ocho caracteres, una mayúscula y una minúscula. Firebase también valida su política. Después del cambio se cierra el acceso de ese navegador y se vuelve automáticamente al ingreso.
+- Un enlace vencido, inválido o usado permite solicitar otro. Los correos anteriores al cambio de la plantilla pueden conservar el formulario predeterminado: solicitar un enlace nuevo para usar la pantalla de MenteClear.
+
+El plazo de acceso es una política de la interfaz sobre la persistencia de Firebase, no un vencimiento personalizado del ID token en el servidor. La API sigue verificando los tokens y su revocación mediante Firebase Admin. El momento de inicio y la elección de persistencia se guardan en el navegador; no contienen contraseñas ni reemplazan la validación de identidad del backend.
 
 ## Pruebas y compilación
 

@@ -1,10 +1,7 @@
 import { fechaNacimientoValida } from "../../compartido/perfil"
 import { useRef, useState } from "react"
-import {
-  createUserWithEmailAndPassword,
-  deleteUser,
-  type User as FirebaseUser,
-} from "firebase/auth"
+import { deleteUser, type User as FirebaseUser } from "firebase/auth"
+import { registrarConCorreo } from "../servicios/sesionAutenticacion"
 import {
   autenticacionFirebase,
   estaFirebaseConfigurado,
@@ -104,7 +101,7 @@ export function PantallaRegistro({
     let etapa = "authentication"
     let creadoUsuario: FirebaseUser | null = null
     try {
-      const credencial = await createUserWithEmailAndPassword(
+      const credencial = await registrarConCorreo(
         autenticacionFirebase,
         formulario.email.trim(),
         formulario.password,
