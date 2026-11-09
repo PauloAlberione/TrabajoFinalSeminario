@@ -98,11 +98,13 @@ export function PantallaIngreso({
           <div className="mt-10 space-y-4">
             {[
               "Ejercicios de memoria",
+              "Ejercicios de lenguaje",
               "Cálculo mental",
-              "Atención y lenguaje",
+              "Atención y reconocimiento",
+              "Velocidad",
               "Seguimiento de progreso",
-            ].map((archivo) => (
-              <div key={archivo} className="flex items-center gap-3 text-left">
+            ].map((etiqueta) => (
+              <div key={etiqueta} className="flex items-center gap-3 text-left">
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{ background: "rgba(255,255,255,0.25)" }}
@@ -113,7 +115,7 @@ export function PantallaIngreso({
                   className="text-base font-semibold"
                   style={{ color: "var(--primary-foreground)" }}
                 >
-                  {archivo}
+                  {etiqueta}
                 </span>
               </div>
             ))}
