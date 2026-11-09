@@ -9,8 +9,10 @@ Se puede crear una cuenta desde el registro. No se entregan cuentas compartidas.
 Los datos y resultados de cada cuenta son privados.
 Sin «Mantener sesión iniciada», el acceso dura hasta 4 horas y se conserva en la pestaña.
 Con la casilla marcada se recuerda hasta 7 días. Se recomienda solo en un dispositivo propio.
-«¿Olvidaste tu contraseña?» permite elegir una nueva contraseña desde el enlace recibido
-y volver al inicio de sesión. Se exigen ocho caracteres, una mayúscula y una minúscula.
+«¿Olvidaste tu contraseña?» permite elegir una nueva contraseña desde el enlace recibido.
+Al finalizar, usar «Continuar» para volver al ingreso. Se exigen ocho caracteres,
+una mayúscula y una minúscula. El correo todavía abre el formulario predeterminado
+de Firebase: el servicio está rechazando habilitar la URL del formulario propio.
 
 CÓDIGO FUENTE E INSTALACIÓN LOCAL
 Descargar TFG-Alberione-codigo-fuente.zip y descomprimirlo.

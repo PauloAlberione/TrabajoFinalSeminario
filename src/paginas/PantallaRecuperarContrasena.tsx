@@ -44,7 +44,7 @@ export function PantallaRecuperarContrasena({
     try {
       autenticacionFirebase.languageCode = "es"
       await sendPasswordResetEmail(autenticacionFirebase, direccion, {
-        url: new URL("/", window.location.origin).href,
+        url: new URL("/?acceso=restablecido", window.location.origin).href,
         handleCodeInApp: false,
       })
       registrarEvento("info", "auth.password_reset_requested")

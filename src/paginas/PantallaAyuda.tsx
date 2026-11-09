@@ -211,7 +211,7 @@ export const preguntasFrecuentes: PreguntaFrecuente[] = [
     id: "contrasena",
     pregunta: "¿Qué hago si olvidé mi contraseña?",
     respuesta:
-      'En el ingreso, elegí "¿Olvidaste tu contraseña?" y escribí tu correo. Si hay una cuenta habilitada, recibirás un enlace para elegir una nueva contraseña desde MenteClear. Debe tener al menos ocho caracteres, una mayúscula A–Z y una minúscula a–z. Después del cambio volverás al ingreso. Si el enlace venció o ya se usó, solicitá otro. Revisá también la carpeta de spam.',
+      'En el ingreso, elegí "¿Olvidaste tu contraseña?" y escribí tu correo. Si hay una cuenta habilitada, recibirás un enlace para elegir una nueva contraseña. Debe tener al menos ocho caracteres, una mayúscula A–Z y una minúscula a–z. Al terminar, elegí "Continuar" si el formulario lo indica para volver a MenteClear e ingresar nuevamente. Si el enlace venció o ya se usó, solicitá otro. Revisá también la carpeta de spam.',
   },
   {
     id: "duracion-sesion",
