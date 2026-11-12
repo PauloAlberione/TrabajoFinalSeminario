@@ -6,6 +6,7 @@ import {
   generarVelocidad,
   evaluarVelocidad,
   clasificacionElementos,
+  coloresSolicitados,
   type VelocidadInstancia,
   type EntregaVelocidad,
 } from "../../../compartido/velocidad"
@@ -46,7 +47,12 @@ for (const tipo of tiposVelocidad)
       )
       assert.equal(
         instancia.config.timeoutMs,
-        tipo === "visualReaction" ? 4500 - indice * 500 : 8000 - indice * 1000,
+        {
+          quickResponse: [8000, 7000, 9000, 11000],
+          touchColor: [8000, 7000, 6000, 8000],
+          quickClassification: [8000, 7000, 6000, 5000],
+          visualReaction: [4500, 4500, 5000, 5500],
+        }[tipo][indice],
       )
       assert.equal(
         new Set(instancia.trials.map((ensayo) => ensayo.id)).size,
@@ -79,28 +85,37 @@ test("Igual o diferente equilibra atributos visibles y evita parejas consecutiva
         if (ensayo.kind !== "quickResponse") throw new Error("Wrong trial")
         assert.equal(
           ensayo.expectedAnswer,
-          visualClave(ensayo.pair[0]) === visualClave(ensayo.pair[1])
+          (ensayo.comparisonPairs ?? [ensayo.pair]).every(
+            (pareja) => visualClave(pareja[0]) === visualClave(pareja[1]),
+          )
             ? "IGUALES"
             : "DIFERENTES",
         )
-        const pareja = ensayo.pair.map(visualClave).join("|")
+        const pareja = (ensayo.comparisonPairs ?? [ensayo.pair])
+          .map((pareja) => pareja.map(visualClave).join("|"))
+          .join(";")
         assert.notEqual(pareja, anterior)
         anterior = pareja
       }
     }
 })
 
-test("Las opciones de colores tienen una sola etiqueta correcta y posiciones variables", () => {
+test("Los colores solicitados son distintos, tienen un botón por color y posiciones variables", () => {
   niveles.forEach((nivel, indice) => {
     const instancia = generarVelocidad("touchColor", nivel)
     instancia.trials.forEach((ensayo, ensayoIndice) => {
-      assert.equal(ensayo.options.length, indice + 3)
+      if (ensayo.kind !== "touchColor") throw new Error("Ensayo inesperado")
+      assert.equal(ensayo.options.length, [3, 4, 6, 8][indice])
       assert.equal(new Set(ensayo.options).size, ensayo.options.length)
-      assert.equal(
-        ensayo.options.filter((opcion) => opcion === ensayo.expectedAnswer)
-          .length,
-        1,
-      )
+      const solicitados = coloresSolicitados(ensayo)
+      assert.equal(solicitados.length, nivel === "veryHard" ? 2 : 1)
+      assert.equal(new Set(solicitados).size, solicitados.length)
+      assert.equal(ensayo.expectedAnswer, solicitados.join("|"))
+      for (const color of solicitados)
+        assert.equal(
+          ensayo.options.filter((opcion) => opcion === color).length,
+          1,
+        )
       if (ensayoIndice)
         assert.notDeepEqual(
           ensayo.options,

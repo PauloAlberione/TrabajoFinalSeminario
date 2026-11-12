@@ -1,6 +1,10 @@
+import { etiquetaRespuestaVelocidad } from "../../../compartido/velocidad/respuestas"
 import type { DetallesEjercicio } from "../../../compartido/resultados"
 
 const etiquetas: Record<string, string> = {
+  optionCount: "Alternativas por ronda",
+  comparisonCount: "Figuras por grupo",
+  selectionCount: "Colores solicitados por ronda",
   pairCount: "Parejas del tablero",
   pairAttempts: "Intentos de pareja",
   matchedPairs: "Parejas encontradas",
@@ -169,11 +173,17 @@ export function MetricasResultado({
                   <th scope="row" className="p-3">
                     {ensayo.trialNumber}
                   </th>
-                  <td className="p-3">{ensayo.expectedAnswer}</td>
+                  <td className="p-3">
+                    {etiquetaRespuestaVelocidad(ensayo.expectedAnswer)}
+                  </td>
                   <td className="p-3">
                     {ensayo.submittedAnswer === null
-                      ? "Sin respuesta"
-                      : (ensayo.submittedAnswer ?? "Sin dato")}
+                      ? ensayo.selectedAnswers?.length
+                        ? `Seleccionaste: ${etiquetaRespuestaVelocidad(ensayo.selectedAnswers.join("|"))}`
+                        : "Sin respuesta"
+                      : ensayo.submittedAnswer
+                        ? etiquetaRespuestaVelocidad(ensayo.submittedAnswer)
+                        : "Sin dato"}
                   </td>
                   <td className="p-3">
                     {ensayo.correct === true

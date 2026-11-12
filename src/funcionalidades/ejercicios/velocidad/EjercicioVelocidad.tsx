@@ -1,3 +1,4 @@
+import { DetalleNivelEjercicio } from "../compartido/DetalleNivelEjercicio"
 import { AvanceEjercicio } from "../compartido/AvanceEjercicio"
 import { GuardandoResultado } from "../compartido/GuardandoResultado"
 import { MensajeRespuesta } from "../compartido/MensajeRespuesta"
@@ -11,7 +12,9 @@ import { etiquetaDificultad } from "../../../tipos/ejercicios"
 import {
   velocidadInstrucciones,
   nombresVelocidad,
-  velocidadColores,
+  coloresSolicitados,
+  etiquetaRespuestaVelocidad,
+  respuestaVelocidadValida,
   type TipoVelocidad,
   type VelocidadInstancia,
   type VelocidadRespuesta,
@@ -60,6 +63,8 @@ export function EjercicioVelocidad({
     [indice, establecerIndice] = useState(0),
     [retroalimentacion, establecerRetroalimentacion] = useState("")
   const [resumen, establecerResumen] = useState<ResumenEjercicio | null>(null)
+  const [seleccionColores, establecerSeleccionColores] = useState<string[]>([])
+  const seleccionColoresActual = useRef<string[]>([])
   const bloqueo = useRef(false),
     cicloVidaBloqueo = useRef(false)
   const respuestas = useRef<VelocidadRespuesta[]>([]),
@@ -123,6 +128,8 @@ export function EjercicioVelocidad({
     esperando.reset()
     bloqueo.current = false
     establecerRetroalimentacion("")
+    seleccionColoresActual.current = []
+    establecerSeleccionColores([])
   }
   async function iniciar() {
     if (navegacion.checkingRecovery) return
@@ -221,7 +228,7 @@ export function EjercicioVelocidad({
       estado === "answered" &&
       !vencimiento &&
       (!enviadoRespuesta ||
-        !ensayo.options.includes(enviadoRespuesta) ||
+        !respuestaVelocidadValida(ensayo, enviadoRespuesta) ||
         transcurridoMs <= 0)
     )
       return
@@ -239,6 +246,9 @@ export function EjercicioVelocidad({
           : vencimiento
             ? instancia.config.timeoutMs
             : transcurridoMs,
+      ...(ensayo.kind === "touchColor"
+        ? { selectedAnswers: [...seleccionColoresActual.current] }
+        : {}),
     }
     respuestas.current.push(resultado)
     audioJuego.reproducir(
@@ -247,23 +257,47 @@ export function EjercicioVelocidad({
         ? "correct"
         : "incorrect",
     )
-    const esperado =
-      ensayo.kind === "touchColor"
-        ? velocidadColores.find((color) => color.id === ensayo.expectedAnswer)!
-            .name
-        : ensayo.expectedAnswer
+    const esperado = etiquetaRespuestaVelocidad(ensayo.expectedAnswer)
     establecerRetroalimentacion(
       resultado.status === "falseStart"
         ? "Tocaste antes de la señal. Esperá a que aparezca en la próxima ronda."
         : resultado.status === "timeout"
           ? "Se terminó el tiempo de esta ronda. Continuamos con la próxima."
-          : ensayo.kind === "visualReaction"
+          : ensayo.kind === "visualReaction" &&
+              enviadoRespuesta === ensayo.expectedAnswer
             ? `Tu tiempo de reacción: ${Math.round(transcurridoMs)} ms.`
-            : enviadoRespuesta === ensayo.expectedAnswer
-              ? "¡Correcto!"
-              : `La respuesta correcta era ${esperado}.`,
+            : ensayo.kind === "visualReaction"
+              ? "Tocaste una señal distractora. Buscá el botón que dice ¡TOCÁ AHORA! en la próxima ronda."
+              : enviadoRespuesta === ensayo.expectedAnswer
+                ? "¡Correcto!"
+                : `La respuesta correcta era ${esperado}.`,
     )
     establecerFase("feedback")
+  }
+  function responder(opcion: string) {
+    if (
+      !ensayo ||
+      fase !== "question" ||
+      deshabilitado ||
+      bloqueo.current ||
+      document.hidden
+    )
+      return
+    if (ensayo.kind !== "touchColor") {
+      finalizar("answered", opcion)
+      return
+    }
+    if (temporizador.sample() <= 0) return
+    if (
+      !ensayo.options.includes(opcion) ||
+      seleccionColoresActual.current.includes(opcion)
+    )
+      return
+    const seleccion = [...seleccionColoresActual.current, opcion]
+    seleccionColoresActual.current = seleccion
+    establecerSeleccionColores(seleccion)
+    if (seleccion.length === coloresSolicitados(ensayo).length)
+      finalizar("answered", seleccion.join("|"))
   }
   useEffect(() => {
     if (fase !== "question" || deshabilitado || !instancia) return
@@ -339,6 +373,7 @@ export function EjercicioVelocidad({
         locked: bloqueo.current,
         pending: pendiente.current,
         waiting: esperando.sample(),
+        selectedColors: seleccionColoresActual.current,
       },
     }
   }
@@ -364,6 +399,8 @@ export function EjercicioVelocidad({
       restaurado.pendingResult?.response as typeof pendiente.current ??
       datos.pending
     esperando.restore(datos.waiting)
+    seleccionColoresActual.current = datos.selectedColors ?? []
+    establecerSeleccionColores(seleccionColoresActual.current)
   })
   return (
     <div
@@ -447,6 +484,7 @@ export function EjercicioVelocidad({
               Cómo jugar
             </h2>
             <InstruccionesEjercicio text={velocidadInstrucciones[tipo]} />
+            {nivel && <DetalleNivelEjercicio tipo={tipo} nivel={nivel} />}
             <p className="text-lg">
               Podés pausar o salir cuando lo necesites. El tiempo disponible se
               muestra en cada ronda.
@@ -511,7 +549,8 @@ export function EjercicioVelocidad({
                     trial={ensayo}
                     phase={fase as "waiting" | "arming" | "question"}
                     disabled={deshabilitado}
-                    onAnswer={(respuesta) => finalizar("answered", respuesta)}
+                    selectedColors={seleccionColores}
+                    onAnswer={responder}
                     onFalseStart={() => finalizar("falseStart")}
                   />
                 )}

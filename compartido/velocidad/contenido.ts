@@ -20,6 +20,8 @@ export const velocidadColores = [
     background: "#EE8B2C",
     foreground: "#222222",
   },
+  { id: "pink", name: "ROSA", background: "#B62562", foreground: "#FFFFFF" },
+  { id: "brown", name: "MARRÓN", background: "#794428", foreground: "#FFFFFF" },
 ]
 export const clasificacionCategorias = [
   "ANIMALES",

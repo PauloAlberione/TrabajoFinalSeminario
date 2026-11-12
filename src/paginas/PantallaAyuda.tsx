@@ -159,7 +159,7 @@ export const preguntasFrecuentes: PreguntaFrecuente[] = [
     id: "cambios",
     pregunta: "¿Qué cambia cuando aumenta la dificultad?",
     respuesta:
-      "Depende del juego: puede haber más elementos para recordar, más opciones para elegir, secuencias o cálculos más complejos o menos tiempo disponible en Velocidad. Los niveles indican la dificultad de las actividades de MenteClear; no son una evaluación clínica ni una clasificación de tu capacidad cognitiva.",
+      "Cada juego aumenta la complejidad de la tarea, además de su cantidad de rondas. En Memoria hay más elementos y menos tiempo de presentación; en Lenguaje, preguntas de contexto y más opciones; en Cálculo, números y operaciones más complejos; en Atención, más figuras, recorridos y patrones. En Velocidad se comparan grupos de figuras, hay más colores y categorías, y aparecen señales distractoras. En Muy difícil, el juego de colores pide dos selecciones en orden. Antes de comenzar se explica qué incluye tu nivel. Los tiempos de cada ronda se ajustan a la tarea. Los niveles describen actividades de MenteClear, no una evaluación clínica de tu capacidad cognitiva.",
   },
   {
     id: "resultados-validos",

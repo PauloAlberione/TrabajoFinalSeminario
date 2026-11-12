@@ -1,3 +1,4 @@
+import { DetalleNivelEjercicio } from "../compartido/DetalleNivelEjercicio"
 import { AvanceEjercicio } from "../compartido/AvanceEjercicio"
 import { GuardandoResultado } from "../compartido/GuardandoResultado"
 import { MensajeRespuesta } from "../compartido/MensajeRespuesta"
@@ -358,6 +359,7 @@ export function EjercicioLenguaje({
               Cómo jugar
             </h2>
             <InstruccionesEjercicio text={lenguajeInstrucciones[tipo]} />
+            {nivel && <DetalleNivelEjercicio tipo={tipo} nivel={nivel} />}
             <p className="text-lg">
               Podés pausar y continuar cuando lo necesites. El nivel se adapta a
               tus actividades de Lenguaje.

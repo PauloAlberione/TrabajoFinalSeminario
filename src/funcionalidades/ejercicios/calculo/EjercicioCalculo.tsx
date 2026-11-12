@@ -1,3 +1,4 @@
+import { DetalleNivelEjercicio } from "../compartido/DetalleNivelEjercicio"
 import { AvanceEjercicio } from "../compartido/AvanceEjercicio"
 import { GuardandoResultado } from "../compartido/GuardandoResultado"
 import { MensajeRespuesta } from "../compartido/MensajeRespuesta"
@@ -389,6 +390,7 @@ export function EjercicioCalculo({
               Cómo jugar
             </h2>
             <InstruccionesEjercicio text={calculoInstrucciones[tipo]} />
+            {nivel && <DetalleNivelEjercicio tipo={tipo} nivel={nivel} />}
             <p className="text-lg">
               Podés pausar y continuar cuando lo necesites. No hay un límite de
               tiempo para responder.

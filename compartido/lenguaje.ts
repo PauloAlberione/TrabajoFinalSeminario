@@ -118,6 +118,23 @@ export type LenguajeDetalles = {
   revealedWords: number
 }
 
+function seleccionarPreguntasNivel(
+  preguntas: EleccionPregunta[],
+  cantidad: number,
+  nivel: Nivel,
+) {
+  if (nivel !== "normal") return mezclar(preguntas).slice(0, cantidad)
+  const directas = Math.floor(cantidad / 2)
+  return mezclar([
+    ...mezclar(
+      preguntas.filter((pregunta) => pregunta.tier === "direct"),
+    ).slice(0, directas),
+    ...mezclar(
+      preguntas.filter((pregunta) => pregunta.tier === "contextual"),
+    ).slice(0, cantidad - directas),
+  ])
+}
+
 export function generarLenguaje(
   tipo: TipoLenguaje,
   nivel: Nivel,
@@ -146,12 +163,14 @@ export function generarLenguaje(
     tipo === "synonymsAntonyms"
       ? mezclar(
           ["synonym", "antonym"].flatMap((relacion) =>
-            mezclar(
+            seleccionarPreguntasNivel(
               conjunto.filter((pregunta) => pregunta.relation === relacion),
-            ).slice(0, configuracion.questionCount / 2),
+              configuracion.questionCount / 2,
+              nivel,
+            ),
           ),
         )
-      : mezclar(conjunto).slice(0, configuracion.questionCount)
+      : seleccionarPreguntasNivel(conjunto, configuracion.questionCount, nivel)
   if (seleccionado.length !== configuracion.questionCount)
     throw new Error("No hay suficientes preguntas para este nivel.")
   return {

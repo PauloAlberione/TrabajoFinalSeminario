@@ -81,7 +81,7 @@ export function validarPuntoControl(
     new TextEncoder().encode(JSON.stringify(entrada)).length > 120000
   )
     throw new Error("Punto de recuperación inválido.")
-  validarEjercicioEstado(ejercicio, entrada.state)
+  validarEjercicioEstado(ejercicio, entrada.state, entrada.step)
   if (
     typeof entrada.state.questionStart === "number" &&
     entrada.state.questionStart > entrada.activeSeconds + 0.000001
@@ -106,6 +106,7 @@ export function validarPuntoControl(
 function validarEjercicioEstado(
   ejercicio: InstanciaEjercicio,
   estado: Record<string, unknown>,
+  paso: number,
 ) {
   const cadena = (clave: string) => {
     if (typeof estado[clave] !== "string")
@@ -158,7 +159,28 @@ function validarEjercicioEstado(
   }
   if (ejercicio.cognitiveFunctionId === "speed") {
     noNegativo("waiting")
-    const instancia = ejercicio.payload as { trials: { id: string }[] }
+    const instancia = ejercicio.payload as {
+      trials: {
+        id: string
+        kind: string
+        options: string[]
+        requestedColors?: string[]
+      }[]
+    }
+    if (estado.selectedColors !== undefined) {
+      const seleccion = arreglo("selectedColors")
+      const ensayo = instancia.trials[paso]
+      if (
+        (seleccion.length > 0 && ensayo.kind !== "touchColor") ||
+        seleccion.length > (ensayo.requestedColors?.length ?? 1) ||
+        new Set(seleccion).size !== seleccion.length ||
+        seleccion.some(
+          (color) =>
+            typeof color !== "string" || !ensayo.options.includes(color),
+        )
+      )
+        throw new Error("Selección de colores inválida.")
+    }
     if (
       (estado.answers as { trialId?: string }[]).some(
         (elemento) =>

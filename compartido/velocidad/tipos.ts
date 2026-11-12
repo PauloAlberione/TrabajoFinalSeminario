@@ -1,11 +1,7 @@
 import type { Nivel } from "../memoria"
 import type { VisualElemento } from "../atencionReconocimiento"
 
-export type TipoVelocidad =
-  | "quickResponse"
-  | "touchColor"
-  | "quickClassification"
-  | "visualReaction"
+export type TipoVelocidad = "quickResponse" | "touchColor" | "quickClassification" | "visualReaction"
 
 export interface VelocidadConfiguracion {
   questionCount: number
@@ -15,6 +11,8 @@ export interface VelocidadConfiguracion {
   waitMinimumMs: number
   waitMaximumMs: number
   targetTimeSeconds: number
+  comparisonCount?: number
+  selectionCount?: number
 }
 
 interface BaseEnsayo {
@@ -23,25 +21,23 @@ interface BaseEnsayo {
   options: string[]
 }
 
-export type VelocidadEnsayo =
-  | (BaseEnsayo & {
-      kind: "quickResponse"
-      pair: [VisualElemento, VisualElemento]
-    })
-  | (BaseEnsayo & {
-      kind: "touchColor"
-      requestedColor: string
-    })
-  | (BaseEnsayo & {
-      kind: "quickClassification"
-      itemId: string
-      label: string
-    })
-  | (BaseEnsayo & {
-      kind: "visualReaction"
-      waitingMs: number
-      position: "center" | "left" | "right"
-    })
+export type VelocidadEnsayo = BaseEnsayo & {
+  kind: "quickResponse"
+  pair: [VisualElemento, VisualElemento]
+  comparisonPairs?: [VisualElemento, VisualElemento][]
+} | BaseEnsayo & {
+  kind: "touchColor"
+  requestedColor: string
+  requestedColors?: string[]
+} | BaseEnsayo & {
+  kind: "quickClassification"
+  itemId: string
+  label: string
+} | BaseEnsayo & {
+  kind: "visualReaction"
+  waitingMs: number
+  position: "center" | "left" | "right"
+}
 
 export interface VelocidadInstancia {
   type: TipoVelocidad
@@ -55,6 +51,7 @@ export interface VelocidadRespuesta {
   status: "answered" | "timeout" | "falseStart"
   submittedAnswer: string | null
   responseTimeMs: number | null
+  selectedAnswers?: string[]
 }
 
 export interface EntregaVelocidad {
@@ -73,6 +70,9 @@ export interface VelocidadEnsayoResultado extends VelocidadRespuesta {
 }
 
 interface VelocidadMetricas {
+  optionCount?: number
+  comparisonCount?: number
+  selectionCount?: number
   totalTrials: number
   attempts: number
   correctAnswers: number
@@ -84,13 +84,11 @@ interface VelocidadMetricas {
   trialResults: VelocidadEnsayoResultado[]
 }
 
-export type VelocidadDetalles =
-  | (VelocidadMetricas & {
-      exerciseType: "quickResponse" | "touchColor" | "quickClassification"
-    })
-  | (VelocidadMetricas & {
-      exerciseType: "visualReaction"
-      validReactions: number
-      medianResponseTimeMs: number | null
-      fastestResponseTimeMs: number | null
-    })
+export type VelocidadDetalles = VelocidadMetricas & {
+  exerciseType: "quickResponse" | "touchColor" | "quickClassification"
+} | VelocidadMetricas & {
+  exerciseType: "visualReaction"
+  validReactions: number
+  medianResponseTimeMs: number | null
+  fastestResponseTimeMs: number | null
+}

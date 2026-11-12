@@ -1,7 +1,12 @@
 import { tiempoEficiencia } from "./medicionTiempo"
 import { mezclar, type Nivel } from "./memoria"
-import { visualConjunto } from "./atencionReconocimiento/generacion"
-import { visualClave } from "./atencionReconocimiento"
+import { generarComparaciones } from "./velocidad/comparaciones"
+import { respuestaVelocidadValida } from "./velocidad/respuestas"
+export {
+  coloresSolicitados,
+  respuestaVelocidadValida,
+  etiquetaRespuestaVelocidad,
+} from "./velocidad/respuestas"
 import {
   clasificacionCategorias,
   clasificacionElementos,
@@ -39,35 +44,41 @@ export const nombresVelocidad: Record<TipoVelocidad, string> = {
 }
 export const velocidadInstrucciones: Record<TipoVelocidad, string> = {
   quickResponse:
-    "Observá las dos figuras y elegí IGUALES o DIFERENTES. Se acepta solo la primera respuesta. Si se termina el tiempo, la ronda cuenta como un error.",
+    "Compará las figuras de los dos grupos y elegí IGUALES si coinciden todas en la misma posición, o DIFERENTES si cambia alguna. En los niveles avanzados se comparan más figuras y sus atributos. Se acepta solo la primera respuesta. Si se termina el tiempo, la ronda cuenta como un error.",
   touchColor:
-    "Leé el color solicitado y tocá el botón correspondiente. Los botones también tienen el nombre del color. Si se termina el tiempo, la ronda cuenta como un error.",
+    "Leé el color solicitado y tocá el botón correspondiente. En Muy difícil se piden dos colores: tocálos en el orden indicado, sin confirmar entre ambos. Los botones también tienen el nombre del color. Si se termina el tiempo, la ronda cuenta como un error.",
   quickClassification:
     "Leé la palabra y elegí la categoría a la que pertenece. Se acepta solo la primera respuesta. Si se termina el tiempo, la ronda cuenta como un error.",
   visualReaction:
-    "Esperá la señal sin tocar el área de juego. Cuando aparezca ¡TOCÁ AHORA!, tocá la señal. Tocar antes o dejar pasar el tiempo cuenta como un error. También podés usar Enter o la barra espaciadora sobre la señal.",
+    "Esperá la señal sin tocar el área de juego. Cuando aparezca ¡TOCÁ AHORA!, tocá esa señal. En los niveles superiores también aparecen botones NO TOCAR: son distractores y tocarlos cuenta como error. Tocar antes o dejar pasar el tiempo cuenta como un error. También podés usar Enter o la barra espaciadora sobre la señal.",
 }
 
 function configuraciones(
-  reaccion: boolean,
   alternativas: number[],
+  ajustes: {
+    reaccion?: boolean
+    limites?: number[]
+    esperados?: number[]
+    comparaciones?: number[]
+    selecciones?: number[]
+  } = {},
 ): Record<Nivel, VelocidadConfiguracion> {
   return Object.fromEntries(
     (["easy", "normal", "hard", "veryHard"] as const).map((nivel, indice) => {
-      const preguntaCantidad = (reaccion ? 6 : 8) + indice * 2
-      const esperadoRespuestaMs = reaccion
-        ? [1500, 1250, 1000, 800][indice]
-        : [4000, 3500, 3000, 2500][indice]
+      const cantidad = (ajustes.reaccion ? 6 : 8) + indice * 2
+      const esperadoMs = (ajustes.esperados ?? [4000, 3500, 3000, 2500])[indice]
       return [
         nivel,
         {
-          questionCount: preguntaCantidad,
-          timeoutMs: reaccion ? 4500 - indice * 500 : 8000 - indice * 1000,
-          expectedResponseMs: esperadoRespuestaMs,
+          questionCount: cantidad,
+          timeoutMs: (ajustes.limites ?? [8000, 7000, 6000, 5000])[indice],
+          expectedResponseMs: esperadoMs,
           optionCount: alternativas[indice],
-          waitMinimumMs: reaccion ? 1500 : 0,
-          waitMaximumMs: reaccion ? 3500 : 0,
-          targetTimeSeconds: (preguntaCantidad * esperadoRespuestaMs) / 1000,
+          waitMinimumMs: ajustes.reaccion ? 1500 : 0,
+          waitMaximumMs: ajustes.reaccion ? 3500 : 0,
+          targetTimeSeconds: (cantidad * esperadoMs) / 1000,
+          comparisonCount: ajustes.comparaciones?.[indice] ?? 1,
+          selectionCount: ajustes.selecciones?.[indice] ?? 1,
         },
       ]
     }),
@@ -76,10 +87,22 @@ function configuraciones(
 
 export const velocidadConfiguraciones: Record<TipoVelocidad, Record<Nivel, VelocidadConfiguracion>> =
   {
-    quickResponse: configuraciones(false, [2, 2, 2, 2]),
-    touchColor: configuraciones(false, [3, 4, 5, 6]),
-    quickClassification: configuraciones(false, [2, 2, 3, 4]),
-    visualReaction: configuraciones(true, [1, 1, 1, 1]),
+    quickResponse: configuraciones([2, 2, 2, 2], {
+      comparaciones: [1, 1, 2, 3],
+      limites: [8000, 7000, 9000, 11000],
+      esperados: [4000, 3500, 4500, 5500],
+    }),
+    touchColor: configuraciones([3, 4, 6, 8], {
+      selecciones: [1, 1, 1, 2],
+      limites: [8000, 7000, 6000, 8000],
+      esperados: [4000, 3500, 3000, 4500],
+    }),
+    quickClassification: configuraciones([2, 2, 3, 4]),
+    visualReaction: configuraciones([1, 2, 3, 4], {
+      reaccion: true,
+      limites: [4500, 4500, 5000, 5500],
+      esperados: [1500, 1600, 1800, 2000],
+    }),
   }
 
 export function generarVelocidad(
@@ -87,14 +110,16 @@ export function generarVelocidad(
   nivel: Nivel,
 ): VelocidadInstancia {
   const configuracion = velocidadConfiguraciones[tipo][nivel]
-  const conjunto = mezclar(visualConjunto(nivel))
   const categorias = clasificacionCategorias.slice(0, configuracion.optionCount)
+  const bancoDisponible = clasificacionElementos.filter(
+    (elemento) =>
+      categorias.includes(elemento.category) &&
+      (nivel !== "easy" || elemento.familiar),
+  )
   const banco = mezclar(
-    clasificacionElementos.filter(
-      (elemento) =>
-        categorias.includes(elemento.category) &&
-        (nivel !== "easy" || elemento.familiar),
-    ),
+    nivel === "easy"
+      ? bancoDisponible
+      : bancoDisponible.filter((elemento) => !elemento.familiar),
   )
   const coincidencia = mezclar(
     Array.from(
@@ -109,29 +134,34 @@ export function generarVelocidad(
       const id = `${tipo}-${indice}`
       switch (tipo) {
         case "quickResponse": {
-          const primero = conjunto[indice % conjunto.length],
-            segundo = coincidencia[indice]
-              ? primero
-              : conjunto[(indice + 1) % conjunto.length]
+          const parejas = generarComparaciones(
+            nivel,
+            configuracion.comparisonCount ?? 1,
+            coincidencia[indice],
+            indice,
+          )
           return {
             id,
             kind: tipo,
-            pair: [primero, segundo],
-            expectedAnswer:
-              visualClave(primero) === visualClave(segundo)
-                ? "IGUALES"
-                : "DIFERENTES",
+            pair: parejas[0],
+            comparisonPairs: parejas,
+            expectedAnswer: coincidencia[indice] ? "IGUALES" : "DIFERENTES",
             options: ["IGUALES", "DIFERENTES"],
           }
         }
         case "touchColor": {
           let opciones = mezclar(colores.map((color) => color.id))
           if (indice % 2) opciones = opciones.slice(1).concat(opciones[0])
+          const solicitados = Array.from(
+            { length: configuracion.selectionCount ?? 1 },
+            (_, posicion) => colores[(indice + posicion) % colores.length].id,
+          )
           return {
             id,
             kind: tipo,
-            requestedColor: colores[indice % colores.length].id,
-            expectedAnswer: colores[indice % colores.length].id,
+            requestedColor: solicitados[0],
+            requestedColors: solicitados,
+            expectedAnswer: solicitados.join("|"),
             options: opciones,
           }
         }
@@ -163,7 +193,13 @@ export function generarVelocidad(
                 ? "center"
                 : (["left", "center", "right"] as const)[indice % 3],
             expectedAnswer: "react",
-            options: ["react"],
+            options: mezclar([
+              "react",
+              ...Array.from(
+                { length: configuracion.optionCount - 1 },
+                (_, posicion) => `distractor-${posicion}`,
+              ),
+            ]),
           }
       }
     },
@@ -206,10 +242,26 @@ export function evaluarVelocidad(
       )
         throw new Error("Ronda inválida.")
       const tiempo = respuesta.responseTimeMs
+      if (
+        respuesta.selectedAnswers !== undefined &&
+        (ensayo.kind !== "touchColor" ||
+          !Array.isArray(respuesta.selectedAnswers) ||
+          respuesta.selectedAnswers.length >
+            (ensayo.requestedColors?.length ?? 1) ||
+          new Set(respuesta.selectedAnswers).size !==
+            respuesta.selectedAnswers.length ||
+          respuesta.selectedAnswers.some(
+            (color) =>
+              typeof color !== "string" || !ensayo.options.includes(color),
+          ) ||
+          (respuesta.status === "answered" &&
+            respuesta.selectedAnswers.join("|") !== respuesta.submittedAnswer))
+      )
+        throw new Error("Selecciones de colores inválidas.")
       if (respuesta.status === "answered") {
         if (
           typeof respuesta.submittedAnswer !== "string" ||
-          !ensayo.options.includes(respuesta.submittedAnswer) ||
+          !respuestaVelocidadValida(ensayo, respuesta.submittedAnswer) ||
           typeof tiempo !== "number" ||
           !Number.isFinite(tiempo) ||
           tiempo <= 0 ||
@@ -233,6 +285,9 @@ export function evaluarVelocidad(
         status: respuesta.status,
         submittedAnswer: respuesta.submittedAnswer,
         responseTimeMs: respuesta.responseTimeMs,
+        ...(respuesta.selectedAnswers
+          ? { selectedAnswers: respuesta.selectedAnswers }
+          : {}),
         trialNumber: indice + 1,
         stimulusId:
           ensayo.kind === "quickClassification" ? ensayo.itemId : ensayo.id,
@@ -265,7 +320,11 @@ export function evaluarVelocidad(
     ).length,
     errores = ensayoResultados.length - respuestasCorrectas
   const tiempos = ensayoResultados
-    .filter((resultado) => resultado.status === "answered")
+    .filter(
+      (resultado) =>
+        resultado.status === "answered" &&
+        (instancia.type !== "visualReaction" || resultado.correct),
+    )
     .map((resultado) => resultado.responseTimeMs!)
     .sort((izquierda, derecha) => izquierda - derecha)
   const promedioRespuestaTiempoMs = tiempos.length
@@ -275,7 +334,8 @@ export function evaluarVelocidad(
     ensayoResultados.reduce(
       (suma, resultado) =>
         suma +
-        (resultado.status === "answered"
+        (resultado.status === "answered" &&
+        (instancia.type !== "visualReaction" || resultado.correct)
           ? tiempoEficiencia(
               resultado.responseTimeMs! / 1000,
               instancia.config.expectedResponseMs / 1000,
@@ -284,6 +344,13 @@ export function evaluarVelocidad(
       0,
     ) / ensayoResultados.length
   const comun = {
+    optionCount: instancia.trials[0].options.length,
+    ...(instancia.trials[0].kind === "touchColor"
+      ? { selectionCount: instancia.trials[0].requestedColors?.length ?? 1 }
+      : {}),
+    ...(instancia.trials[0].kind === "quickResponse"
+      ? { comparisonCount: instancia.trials[0].comparisonPairs?.length ?? 1 }
+      : {}),
     totalTrials: ensayoResultados.length,
     attempts: ensayoResultados.filter(
       (resultado) => resultado.status !== "timeout",
