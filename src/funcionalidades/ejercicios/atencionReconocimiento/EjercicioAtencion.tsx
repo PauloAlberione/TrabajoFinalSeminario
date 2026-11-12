@@ -1,3 +1,5 @@
+import { AvanceEjercicio } from "../compartido/AvanceEjercicio"
+import { GuardandoResultado } from "../compartido/GuardandoResultado"
 import { MensajeRespuesta } from "../compartido/MensajeRespuesta"
 import { aciertoAtencion } from "../compartido/respuestaVisual"
 import { audioJuego } from "../../../servicios/audioJuego"
@@ -432,7 +434,10 @@ export function EjercicioAtencion({
           </div>
         )}
         {fase === "instructions" && (
-          <section className="p-8 rounded-3xl space-y-6" style={tarjeta}>
+          <section
+            className="preparacion-ejercicio p-8 rounded-3xl space-y-6"
+            style={tarjeta}
+          >
             <h2
               className="text-3xl font-bold"
               style={{ fontFamily: "Fraunces, serif" }}
@@ -458,11 +463,13 @@ export function EjercicioAtencion({
           ronda &&
           ["preview", "movement", "question", "feedback"].includes(fase) && (
             <>
-              <div className="flex flex-wrap justify-between items-center gap-4 mb-5">
-                <p className="text-xl font-semibold">
-                  {tipo === "recognizePattern" ? "Pregunta" : "Ronda"}{" "}
-                  {indice + 1} de {instancia.rounds.length}
-                </p>
+              <AvanceEjercicio
+                completados={indice + (fase === "feedback" ? 1 : 0)}
+                total={instancia.rounds.length}
+                etiqueta={`${
+                  tipo === "recognizePattern" ? "Pregunta" : "Ronda"
+                } ${indice + 1} de ${instancia.rounds.length}`}
+              >
                 <button
                   className={control}
                   style={tarjeta}
@@ -471,7 +478,7 @@ export function EjercicioAtencion({
                 >
                   {pausado ? "Continuar" : "Pausar"}
                 </button>
-              </div>
+              </AvanceEjercicio>
               <p className="text-lg mb-5">
                 Tiempo de respuesta: {Math.floor(temporizador.seconds)} s
               </p>
@@ -570,11 +577,7 @@ export function EjercicioAtencion({
               </section>
             </>
           )}
-        {fase === "saving" && !error && (
-          <p role="status" className="p-12 text-2xl">
-            Guardando tu resultado…
-          </p>
-        )}
+        {fase === "saving" && !error && <GuardandoResultado />}
         {fase === "results" && resumen && (
           <ResumenResultadoEjercicio
             summary={resumen}

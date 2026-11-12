@@ -3,7 +3,14 @@ import { useAccesibilidad } from "../../accesibilidad/ProveedorAccesibilidad"
 export function InstruccionesEjercicio({ text: texto }: { text: string }) {
   const accesibilidad = useAccesibilidad()
   if (!accesibilidad?.preferences.instruccionesAmpliadas)
-    return <p className="text-xl leading-relaxed">{texto}</p>
+    return (
+      <div className="guia-instrucciones">
+        <span className="guia-instrucciones-icono" aria-hidden="true">
+          ☝
+        </span>
+        <p className="text-xl leading-relaxed">{texto}</p>
+      </div>
+    )
   const pasos = texto.split(/(?<=[.!?])\s+/u).filter(Boolean)
   return (
     <div className="expanded-instructions space-y-5">

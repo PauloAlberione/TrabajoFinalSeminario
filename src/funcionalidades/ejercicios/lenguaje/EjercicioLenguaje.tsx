@@ -1,3 +1,5 @@
+import { AvanceEjercicio } from "../compartido/AvanceEjercicio"
+import { GuardandoResultado } from "../compartido/GuardandoResultado"
 import { MensajeRespuesta } from "../compartido/MensajeRespuesta"
 import { aciertoLenguaje } from "../compartido/respuestaVisual"
 import { audioJuego } from "../../../servicios/audioJuego"
@@ -345,7 +347,10 @@ export function EjercicioLenguaje({
           </div>
         )}
         {fase === "instructions" && (
-          <section className="p-8 rounded-3xl space-y-6" style={tarjeta}>
+          <section
+            className="preparacion-ejercicio p-8 rounded-3xl space-y-6"
+            style={tarjeta}
+          >
             <h2
               className="text-3xl font-bold"
               style={{ fontFamily: "Fraunces, serif" }}
@@ -370,19 +375,29 @@ export function EjercicioLenguaje({
         {instancia && ["question", "feedback"].includes(fase) && (
           <>
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <p className="text-xl font-semibold">
-                {tipo === "simpleCrossword"
-                  ? `${instancia.config.questionCount} palabras`
-                  : `Pregunta ${indice + 1} de ${instancia.questions.length}`}
-              </p>
-              <button
-                className={control}
-                style={tarjeta}
-                disabled={ocupado}
-                onClick={alternarPausar}
-              >
-                {pausado ? "Continuar" : "Pausar"}
-              </button>
+              {tipo === "simpleCrossword" ? (
+                <p className="text-xl font-bold mb-4">
+                  {instancia.config.questionCount} palabras
+                </p>
+              ) : (
+                <div className="flex-1 min-w-48">
+                  <AvanceEjercicio
+                    completados={indice + (fase === "feedback" ? 1 : 0)}
+                    total={instancia.questions.length}
+                    etiqueta={`Pregunta ${indice + 1} de ${instancia.questions.length}`}
+                  />
+                </div>
+              )}
+              <div className="flex justify-end">
+                <button
+                  className={control}
+                  style={tarjeta}
+                  disabled={ocupado}
+                  onClick={alternarPausar}
+                >
+                  {pausado ? "Continuar" : "Pausar"}
+                </button>
+              </div>
             </div>
             <p className="text-lg mb-5">
               Tiempo de respuesta: {Math.floor(temporizador.seconds)} s
@@ -483,11 +498,7 @@ export function EjercicioLenguaje({
             </section>
           </>
         )}
-        {fase === "saving" && !error && (
-          <p role="status" className="text-2xl text-center p-12">
-            Guardando tu resultado…
-          </p>
-        )}
+        {fase === "saving" && !error && <GuardandoResultado />}
         {fase === "results" && resumen && (
           <ResumenResultadoEjercicio
             summary={resumen}

@@ -1,4 +1,3 @@
-import { etiquetasCategorias } from "../funcionalidades/historial/catalogo"
 import type { InformeEstadisticas } from "../../compartido/estadisticas"
 import {
   formatearTiempoActivo,
@@ -6,7 +5,8 @@ import {
 } from "../funcionalidades/estadisticas/useEstadisticas"
 import { type PerfilUsuario } from "../servicios/datosUsuario"
 import { type Pantalla } from "../tipos/navegacion"
-import { IconoNumeros, IconoFlecha } from "../componentes/Iconos"
+import { IconoFlecha } from "../componentes/Iconos"
+import { categoriasEjercicios } from "../funcionalidades/ejercicios/catalogoCategorias"
 
 export function PantallaInicio({
   onNavigate: alNavegar,
@@ -18,6 +18,17 @@ export function PantallaInicio({
   report: InformeEstadisticas
 }) {
   const nombre = perfil.nombre || "Usuario"
+  const categoriaSugerida = categoriasEjercicios.find(
+    (categoria) =>
+      categoria.id ===
+      ({
+        memory: "memoria",
+        language: "lenguaje",
+        calculation: "calculo",
+        attentionRecognition: "atencion",
+        speed: "velocidad",
+      } as const)[informe.suggestedCategory],
+  )!
   return (
     <div className="p-5 md:p-10 max-w-6xl mx-auto">
       <div
@@ -43,7 +54,7 @@ export function PantallaInicio({
               color: "var(--primary-foreground)",
             }}
           >
-            Buenos días, {nombre} 👋
+            Hola, {nombre} <span aria-hidden="true">👋</span>
           </h1>
           <p
             className="text-lg mt-2"
@@ -111,25 +122,18 @@ export function PantallaInicio({
             )}
           </div>
           <div>
-            <h2
-              className="text-2xl font-bold mb-4"
-              style={{ fontFamily: "Fraunces, serif" }}
-            >
-              Seguir ejercitando
-            </h2>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <h2 className="text-2xl font-bold">Seguir ejercitando</h2>
+              <button
+                onClick={() => alNavegar("activities")}
+                className="px-4 py-2 rounded-xl text-primary font-bold bg-muted"
+              >
+                Ver los 20 ejercicios →
+              </button>
+            </div>
             <button
-              onClick={() =>
-                alNavegar(
-                  ({
-                    memory: "game",
-                    language: "lenguaje-game",
-                    calculation: "calculo-game",
-                    attentionRecognition: "atencion-game",
-                    speed: "velocidad-game",
-                  } as const)[informe.suggestedCategory],
-                )
-              }
-              className="w-full flex items-center gap-5 p-6 rounded-3xl text-left transition-all hover:scale-[1.01] active:scale-98"
+              onClick={() => alNavegar(categoriaSugerida.demoScreen)}
+              className="superficie-interactiva w-full flex flex-wrap sm:flex-nowrap items-center gap-5 p-6 rounded-3xl text-left"
               style={{
                 background: "var(--secondary)",
                 color: "white",
@@ -139,12 +143,10 @@ export function PantallaInicio({
                 className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0"
                 style={{ background: "rgba(255,255,255,0.2)" }}
               >
-                <IconoNumeros />
+                {categoriaSugerida.icon}
               </div>
               <div className="flex-1">
-                <p className="text-xl font-bold">
-                  {etiquetasCategorias[informe.suggestedCategory]}
-                </p>
+                <p className="text-xl font-bold">{categoriaSugerida.label}</p>
                 <p
                   className="text-base"
                   style={{ color: "var(--secondary-foreground)" }}
@@ -247,6 +249,12 @@ export function PantallaInicio({
             >
               Logros recientes
             </h2>
+            {informe.currentStreak === 0 && (
+              <p className="text-base text-muted-foreground">
+                Cada actividad que completás queda en tu historial. Podés volver
+                a practicar cuando quieras.
+              </p>
+            )}
             <div className="space-y-3">
               {(informe.currentStreak > 0
                 ? [

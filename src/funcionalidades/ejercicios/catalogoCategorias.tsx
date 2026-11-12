@@ -19,7 +19,8 @@ export const categoriasEjercicios: {
   demoScreen: Pantalla
   activities: {
     name: string
-    time: string
+    descripcion: string
+    simbolo: string
   }[]
 }[] = [
   {
@@ -32,10 +33,28 @@ export const categoriasEjercicios: {
     description:
       "Ejercita tu capacidad de recordar imágenes, palabras y secuencias.",
     activities: [
-      { name: "Pareja de imágenes", time: "10 min" },
-      { name: "Secuencia de colores", time: "8 min" },
-      { name: "Lista de palabras", time: "12 min" },
-      { name: "Recuerda el orden", time: "9 min" },
+      {
+        name: "Pareja de imágenes",
+        descripcion:
+          "Destapá las tarjetas y encontrá las imágenes que coinciden.",
+        simbolo: "🃏",
+      },
+      {
+        name: "Secuencia de colores",
+        descripcion:
+          "Observá los colores y repetí la secuencia en el mismo orden.",
+        simbolo: "🎨",
+      },
+      {
+        name: "Lista de palabras",
+        descripcion: "Memorizá una lista y reconocé las palabras que viste.",
+        simbolo: "📝",
+      },
+      {
+        name: "Recuerda el orden",
+        descripcion: "Recordá los elementos y reconstruí su orden.",
+        simbolo: "🧺",
+      },
     ],
   },
   {
@@ -48,10 +67,27 @@ export const categoriasEjercicios: {
     description:
       "Mejora tu fluencia verbal, vocabulario y comprensión lectora.",
     activities: [
-      { name: "Asociación de palabras", time: "10 min" },
-      { name: "Crucigrama simple", time: "15 min" },
-      { name: "Completar la frase", time: "8 min" },
-      { name: "Sinónimos y antónimos", time: "12 min" },
+      {
+        name: "Asociación de palabras",
+        descripcion: "Encontrá la relación entre las palabras.",
+        simbolo: "🔗",
+      },
+      {
+        name: "Crucigrama simple",
+        descripcion:
+          "Resolvé las pistas y completá las palabras en la cuadrícula.",
+        simbolo: "✏️",
+      },
+      {
+        name: "Completar la frase",
+        descripcion: "Elegí la palabra que falta para completar la frase.",
+        simbolo: "💬",
+      },
+      {
+        name: "Sinónimos y antónimos",
+        descripcion: "Buscá palabras con significado similar o contrario.",
+        simbolo: "📖",
+      },
     ],
   },
   {
@@ -64,10 +100,26 @@ export const categoriasEjercicios: {
     description:
       "Practica operaciones matemáticas sencillas y series numéricas.",
     activities: [
-      { name: "Cálculo mental", time: "8 min" },
-      { name: "Secuencias numéricas", time: "10 min" },
-      { name: "Ordenar números", time: "7 min" },
-      { name: "Resta y diferencia", time: "9 min" },
+      {
+        name: "Cálculo mental",
+        descripcion: "Resolvé las operaciones y escribí tu respuesta.",
+        simbolo: "➕",
+      },
+      {
+        name: "Secuencias numéricas",
+        descripcion: "Descubrí qué número falta en la secuencia.",
+        simbolo: "🔢",
+      },
+      {
+        name: "Ordenar números",
+        descripcion: "Organizá los números según la consigna.",
+        simbolo: "↕️",
+      },
+      {
+        name: "Resta y diferencia",
+        descripcion: "Resolvé restas y encontrá la diferencia entre números.",
+        simbolo: "➖",
+      },
     ],
   },
   {
@@ -80,10 +132,27 @@ export const categoriasEjercicios: {
     description:
       "Entrena la concentración, la observación y el reconocimiento visual.",
     activities: [
-      { name: "Identificar elementos", time: "10 min" },
-      { name: "Seguir el objeto", time: "6 min" },
-      { name: "Reconoce el patrón", time: "8 min" },
-      { name: "Figura oculta", time: "12 min" },
+      {
+        name: "Identificar elementos",
+        descripcion: "Buscá los elementos que coinciden con la muestra.",
+        simbolo: "🔎",
+      },
+      {
+        name: "Seguir el objeto",
+        descripcion:
+          "Seguí el objeto mientras se mueve y encontralo al detenerse.",
+        simbolo: "👀",
+      },
+      {
+        name: "Reconoce el patrón",
+        descripcion: "Observá las figuras y descubrí cuál completa el patrón.",
+        simbolo: "🧩",
+      },
+      {
+        name: "Figura oculta",
+        descripcion: "Encontrá la figura que coincide con la muestra.",
+        simbolo: "◇",
+      },
     ],
   },
   {
@@ -96,10 +165,28 @@ export const categoriasEjercicios: {
     description:
       "Mejora la rapidez de respuesta y el procesamiento de la información.",
     activities: [
-      { name: "Respuesta rápida", time: "6 min" },
-      { name: "Toca el color correcto", time: "7 min" },
-      { name: "Clasificar rápido", time: "8 min" },
-      { name: "Reacción visual", time: "5 min" },
+      {
+        name: "Respuesta rápida",
+        descripcion:
+          "Compará dos figuras y decidí si son iguales o diferentes.",
+        simbolo: "⚡",
+      },
+      {
+        name: "Toca el color correcto",
+        descripcion:
+          "Leé el color solicitado y elegí el botón correspondiente.",
+        simbolo: "🎨",
+      },
+      {
+        name: "Clasificar rápido",
+        descripcion: "Elegí la categoría a la que pertenece cada palabra.",
+        simbolo: "🗂️",
+      },
+      {
+        name: "Reacción visual",
+        descripcion: "Esperá la señal y respondé cuando aparezca.",
+        simbolo: "🚦",
+      },
     ],
   },
 ]

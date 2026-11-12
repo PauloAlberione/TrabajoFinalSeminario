@@ -5,7 +5,7 @@ import { tiposLenguaje } from "../../compartido/lenguaje"
 import { tiposMemoria } from "../../compartido/memoria"
 import { type Pantalla } from "../tipos/navegacion"
 import { categoriasEjercicios } from "../funcionalidades/ejercicios/catalogoCategorias"
-import { IconoReloj, IconoFlecha } from "../componentes/Iconos"
+import { IconoFlecha } from "../componentes/Iconos"
 
 export function PantallaActividades({
   onNavigate: alNavegar,
@@ -21,29 +21,22 @@ export function PantallaActividades({
     categoriasEjercicios[0]
 
   return (
-    <div
-      className="flex flex-col 2xl:flex-row h-full"
-      style={{ minHeight: "calc(100vh - 0px)" }}
-    >
-      <div
-        className="w-full 2xl:w-80 flex-shrink-0 p-5 overflow-y-auto"
-        style={{
-          borderRight: "1.5px solid var(--border)",
-          background: "var(--card)",
-        }}
-      >
-        <h2
-          className="text-2xl font-bold mb-5 px-2"
-          style={{ fontFamily: "Fraunces, serif" }}
-        >
-          Categorías
-        </h2>
-        <div className="space-y-2">
+    <div className="pantalla-amplia max-w-7xl mx-auto p-5 md:p-10">
+      <header className="mb-8">
+        <p className="antetitulo">20 ejercicios · 5 categorías</p>
+        <h1 className="text-4xl font-bold">Elegí tu próxima actividad</h1>
+        <p className="text-lg text-muted-foreground mt-3">
+          Explorá las categorías y encontrá una propuesta que disfrutes.
+        </p>
+      </header>
+      <nav aria-label="Categorías de ejercicios" className="mb-8">
+        <div className="lista-categorias">
           {categoriasEjercicios.map((categoria) => (
             <button
               key={categoria.id}
               onClick={() => alCambiarCategoria(categoria.id)}
-              className="w-full flex items-center gap-4 p-4 rounded-2xl text-left transition-all"
+              aria-pressed={seleccionado.id === categoria.id}
+              className="selector-categoria w-full flex flex-col items-start gap-3 p-3 rounded-2xl text-left"
               style={{
                 background:
                   seleccionado.id === categoria.id
@@ -56,7 +49,7 @@ export function PantallaActividades({
               }}
             >
               <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                className="categoria-icono rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{
                   background:
                     seleccionado.id === categoria.id
@@ -92,12 +85,12 @@ export function PantallaActividades({
             </button>
           ))}
         </div>
-      </div>
+      </nav>
 
-      <div className="flex-1 min-w-0 p-5 md:p-10 overflow-y-auto">
-        <div className="max-w-3xl">
+      <div className="min-w-0">
+        <div>
           <div
-            className="flex items-center gap-5 mb-8 p-6 rounded-3xl"
+            className="cabecera-categoria flex flex-wrap items-center gap-5 mb-8 p-6 rounded-3xl"
             style={{ background: seleccionado.bg }}
           >
             <div
@@ -130,7 +123,7 @@ export function PantallaActividades({
           >
             Ejercicios disponibles
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="tarjetas-actividades">
             {seleccionado.activities.map((actividad, indice) => (
               <button
                 key={indice}
@@ -147,7 +140,7 @@ export function PantallaActividades({
                             : tiposVelocidad[indice],
                   )
                 }
-                className="flex flex-col p-6 rounded-3xl text-left transition-all hover:scale-[1.02] active:scale-98"
+                className="tarjeta-actividad flex flex-col p-6 rounded-3xl text-left"
                 style={{
                   background: "var(--card)",
                   border: "1.5px solid var(--border)",
@@ -155,19 +148,14 @@ export function PantallaActividades({
               >
                 <div className="flex items-center justify-between mb-4">
                   <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
+                    aria-hidden="true"
+                    className="actividad-simbolo rounded-2xl flex items-center justify-center text-3xl"
                     style={{
                       background: seleccionado.bg,
                       color: seleccionado.color,
                     }}
                   >
-                    {indice === 0
-                      ? "★"
-                      : indice === 1
-                        ? "●"
-                        : indice === 2
-                          ? "◆"
-                          : "▲"}
+                    {actividad.simbolo}
                   </div>
                   <div
                     className="flex items-center gap-1.5 text-sm font-semibold px-3 py-1 rounded-full"
@@ -176,18 +164,15 @@ export function PantallaActividades({
                       color: seleccionado.color,
                     }}
                   >
-                    <IconoReloj />
-                    {actividad.time}
+                    {indice + 1} de {seleccionado.activities.length}
                   </div>
                 </div>
-                <p className="text-lg font-bold mb-1">{actividad.name}</p>
+                <p className="text-xl font-bold mb-2">{actividad.name}</p>
                 <p
-                  className="text-sm"
+                  className="text-base flex-1"
                   style={{ color: "var(--muted-foreground)" }}
                 >
-                  {indice === 0
-                    ? "Recomendado para hoy"
-                    : `Ejercicio de ${seleccionado.label.toLowerCase()}`}
+                  {actividad.descripcion}
                 </p>
                 <div className="mt-4 flex items-center justify-between">
                   <span
@@ -197,19 +182,7 @@ export function PantallaActividades({
                       color: "var(--muted-foreground)",
                     }}
                   >
-                    {[
-                      "memoria",
-                      "lenguaje",
-                      "calculo",
-                      "atencion",
-                      "velocidad",
-                    ].includes(seleccionado.id)
-                      ? "Nivel adaptativo"
-                      : indice % 3 === 0
-                        ? "Normal"
-                        : indice % 3 === 1
-                          ? "Fácil"
-                          : "Desafío"}
+                    Nivel automático
                   </span>
                   <div
                     className="flex items-center gap-1 font-bold"
@@ -222,82 +195,21 @@ export function PantallaActividades({
               </button>
             ))}
           </div>
-          <div
-            className="mt-8 p-6 rounded-3xl"
-            style={{ background: "var(--muted)" }}
-          >
-            <p className="text-base font-bold mb-3">Niveles de dificultad</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {([
-                "memoria",
-                "lenguaje",
-                "calculo",
-                "atencion",
-                "velocidad",
-              ].includes(seleccionado.id)
-                ? [
-                    {
-                      level: "Fácil",
-                      desc: "El nivel inicial para comenzar",
-                      color: "var(--categoria-lenguaje)",
-                    },
-                    {
-                      level: "Normal",
-                      desc: "Se adapta a tus actividades anteriores",
-                      color: "var(--categoria-memoria)",
-                    },
-                    {
-                      level: "Difícil",
-                      desc: "Un nuevo paso para practicar",
-                      color: "var(--categoria-calculo)",
-                    },
-                    {
-                      level: "Muy difícil",
-                      desc: "El nivel más avanzado",
-                      color: "var(--categoria-velocidad)",
-                    },
-                  ]
-                : [
-                    {
-                      level: "Fácil",
-                      desc: "Ideal para empezar o días tranquilos",
-                      color: "var(--categoria-lenguaje)",
-                    },
-                    {
-                      level: "Normal",
-                      desc: "El nivel recomendado para la mayoría",
-                      color: "var(--categoria-memoria)",
-                    },
-                    {
-                      level: "Desafío",
-                      desc: "Para quienes buscan un reto mayor",
-                      color: "var(--categoria-calculo)",
-                    },
-                  ]
-              ).map((dato) => (
-                <div key={dato.level} className="flex items-start gap-2">
-                  <span
-                    className="w-3 h-3 rounded-full mt-1 flex-shrink-0"
-                    style={{ background: dato.color }}
-                  />
-                  <div>
-                    <p
-                      className="text-sm font-bold"
-                      style={{ color: dato.color }}
-                    >
-                      {dato.level}
-                    </p>
-                    <p
-                      className="text-sm"
-                      style={{ color: "var(--muted-foreground)" }}
-                    >
-                      {dato.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <details className="mt-8 p-6 rounded-3xl border border-border bg-muted">
+            <summary className="font-bold cursor-pointer">
+              ¿Cómo cambia la dificultad?
+            </summary>
+            <p className="mt-4 text-lg">
+              Cada categoría comienza en Fácil y se adapta automáticamente a tus
+              resultados. Podés llegar a Normal, Difícil y Muy difícil.
+            </p>
+            <button
+              className="mt-4 px-5 py-3 rounded-2xl font-bold bg-card text-primary"
+              onClick={() => alNavegar("help")}
+            >
+              Ver los criterios en Ayuda →
+            </button>
+          </details>
         </div>
       </div>
     </div>

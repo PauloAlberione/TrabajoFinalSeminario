@@ -1,3 +1,4 @@
+import { AvanceEjercicio } from "../compartido/AvanceEjercicio"
 import { MensajeRespuesta } from "../compartido/MensajeRespuesta"
 import { audioJuego } from "../../../servicios/audioJuego"
 import { useLayoutEffect, useRef, useState } from "react"
@@ -160,6 +161,11 @@ export function TableroCrucigrama({
   }
   return (
     <div className="space-y-6">
+      <AvanceEjercicio
+        completados={Object.keys(finalizado).length}
+        total={crucigrama.words.length}
+        etiqueta={`Palabras completadas: ${Object.keys(finalizado).length} de ${crucigrama.words.length}`}
+      />
       <p className="text-lg">
         Elegí una pista, completá sus casillas y comprobá la palabra. Las letras
         compartidas se conservan.

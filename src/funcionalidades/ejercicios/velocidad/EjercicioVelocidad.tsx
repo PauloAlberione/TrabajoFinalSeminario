@@ -1,3 +1,5 @@
+import { AvanceEjercicio } from "../compartido/AvanceEjercicio"
+import { GuardandoResultado } from "../compartido/GuardandoResultado"
 import { MensajeRespuesta } from "../compartido/MensajeRespuesta"
 import { aciertoVelocidad } from "../compartido/respuestaVisual"
 import { audioJuego } from "../../../servicios/audioJuego"
@@ -434,7 +436,10 @@ export function EjercicioVelocidad({
           </div>
         )}
         {fase === "instructions" && (
-          <section className="p-8 rounded-3xl space-y-6" style={tarjeta}>
+          <section
+            className="preparacion-ejercicio p-8 rounded-3xl space-y-6"
+            style={tarjeta}
+          >
             <h2
               className="text-3xl font-bold"
               style={{ fontFamily: "Fraunces, serif" }}
@@ -460,10 +465,11 @@ export function EjercicioVelocidad({
           ensayo &&
           ["waiting", "arming", "question", "feedback"].includes(fase) && (
             <>
-              <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
-                <p className="text-xl font-semibold">
-                  Ronda {indice + 1} de {instancia.trials.length}
-                </p>
+              <AvanceEjercicio
+                completados={respuestas.current.length}
+                total={instancia.trials.length}
+                etiqueta={`Ronda ${indice + 1} de ${instancia.trials.length}`}
+              >
                 <button
                   className={control}
                   style={tarjeta}
@@ -472,13 +478,7 @@ export function EjercicioVelocidad({
                 >
                   {pausado ? "Continuar" : "Pausar"}
                 </button>
-              </div>
-              <progress
-                aria-label="Progreso del ejercicio"
-                className="w-full h-4 mb-5"
-                max={instancia.trials.length}
-                value={respuestas.current.length}
-              />
+              </AvanceEjercicio>
               <p className="text-lg mb-3">
                 Tiempo activo: {activoTiempo.toFixed(1)} s
               </p>
@@ -539,11 +539,7 @@ export function EjercicioVelocidad({
               </section>
             </>
           )}
-        {fase === "saving" && !error && (
-          <p role="status" className="p-12 text-2xl">
-            Guardando tu resultado…
-          </p>
-        )}
+        {fase === "saving" && !error && <GuardandoResultado />}
         {fase === "results" && resumen && (
           <ResumenResultadoEjercicio
             summary={resumen}

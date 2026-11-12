@@ -1,3 +1,5 @@
+import { AvanceEjercicio } from "../compartido/AvanceEjercicio"
+import { GuardandoResultado } from "../compartido/GuardandoResultado"
 import { MensajeRespuesta } from "../compartido/MensajeRespuesta"
 import { aciertoMemoria } from "../compartido/respuestaVisual"
 import { audioJuego } from "../../../servicios/audioJuego"
@@ -452,7 +454,10 @@ export function EjercicioMemoria({
           </div>
         )}
         {fase === "instructions" && (
-          <section className="p-8 rounded-3xl space-y-6" style={tarjetaEstilo}>
+          <section
+            className="preparacion-ejercicio p-8 rounded-3xl space-y-6"
+            style={tarjetaEstilo}
+          >
             <h2
               className="text-3xl font-bold"
               style={{ fontFamily: "Fraunces, serif" }}
@@ -477,12 +482,23 @@ export function EjercicioMemoria({
         {instancia &&
           ["ready", "presentation", "response", "feedback"].includes(fase) && (
             <>
-              <div className="flex justify-between items-center gap-4 mb-6">
-                <p className="text-xl font-semibold">
-                  {tipo === "imagePairs"
+              <AvanceEjercicio
+                completados={
+                  tipo === "imagePairs"
+                    ? emparejado.length / 2
+                    : rondaIndice + (fase === "feedback" ? 1 : 0)
+                }
+                total={
+                  tipo === "imagePairs"
+                    ? configuracion!.size
+                    : configuracion!.rounds
+                }
+                etiqueta={
+                  tipo === "imagePairs"
                     ? `Parejas: ${emparejado.length / 2} de ${configuracion!.size}`
-                    : `Ronda ${rondaIndice + 1} de ${configuracion!.rounds}`}
-                </p>
+                    : `Ronda ${rondaIndice + 1} de ${configuracion!.rounds}`
+                }
+              >
                 <button
                   className={botonClase}
                   style={tarjetaEstilo}
@@ -491,7 +507,7 @@ export function EjercicioMemoria({
                 >
                   {pausado ? "Continuar" : "Pausar"}
                 </button>
-              </div>
+              </AvanceEjercicio>
               {fase === "response" && (
                 <p className="text-lg mb-5">
                   Tiempo de respuesta:{" "}
@@ -551,11 +567,7 @@ export function EjercicioMemoria({
               )}
             </>
           )}
-        {fase === "saving" && !error && (
-          <p role="status" className="text-2xl text-center p-12">
-            Guardando tu resultado…
-          </p>
-        )}
+        {fase === "saving" && !error && <GuardandoResultado />}
         {fase === "results" && resumen && (
           <ResumenResultadoEjercicio
             summary={resumen}

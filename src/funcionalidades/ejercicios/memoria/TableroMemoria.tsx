@@ -53,9 +53,11 @@ function ImagenParejasTablero({
                   ? "encontrada"
                   : mostrar.length === 2 && mostrado
                     ? "revisar"
-                    : "oculta"
+                    : mostrado
+                      ? "visible"
+                      : "oculta"
               }
-              className="min-h-24 p-3 rounded-2xl text-xl font-bold focus-visible:outline-4 focus-visible:outline-orange-700"
+              className="tarjeta-memoria min-h-24 p-3 rounded-2xl text-xl font-bold focus-visible:outline-4 focus-visible:outline-orange-700"
               style={{
                 background: mostrado ? "#FAEDDF" : "var(--categoria-memoria)",
                 color: mostrado ? "#66300f" : "white",
@@ -71,7 +73,13 @@ function ImagenParejasTablero({
               }
               onClick={() => elegirTarjeta(indice)}
             >
-              {mostrado ? elemento : "?"}
+              {mostrado ? (
+                elemento
+              ) : (
+                <span aria-hidden="true" className="tarjeta-memoria-dorso">
+                  ?
+                </span>
+              )}
               {encontrado && <span aria-hidden="true"> ✓</span>}
             </button>
           )
